@@ -1,0 +1,29 @@
+{
+  "name": "bid.io-client",
+  "version": "0.1.0",
+  "description": "bid.io client",
+  "author": {
+    "name": "Jonathan Brumley",
+    "email": "cayasso@gmail.com"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:18techs/bid.io-client.git"
+  },
+  "dependencies": {    
+    "socket.io-client": "0.9.11",
+    "bid.io-parser": "git+ssh://git@bitbucket.org:18techs/bid.io-parser.git",
+    "debug": "*"
+  },
+  "devDependencies": {
+    "uglify-js": "1.2.5",
+    "doxx": "*",
+    "mocha": "*",
+    "expect.js": "*",
+    "browserbuild": "*"
+  },
+  "scripts": {
+    "test": "make test"
+  }
+}
