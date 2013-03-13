@@ -138,9 +138,9 @@ module.exports = Channel;
 /**
  * Channel constructor.
  *
- * @param {String} name
- * @param {Object} options
- * @param {Function} callback
+ * @param {String} name channel name
+ * @param {Manager} manager manager instance
+ * @param {Function} fn callback
  * @api private
  */
 
@@ -384,7 +384,7 @@ exports.protocol = parser.protocol;
  */
 
 exports.Manager = Manager;
-exports.Socket = Channel;
+exports.Channel = Channel;
 
 });require.register("manager.js", function(module, exports, require, global){
 /**
