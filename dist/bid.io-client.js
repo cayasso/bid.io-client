@@ -670,7 +670,7 @@ Manager.prototype.join = function (name, opts) {
   opts = opts || {};
   debug('joining channel %s', name);
   var fnc = opts[FORCE_NEW_CONNECTION];
-  var chnl = chnls[name];
+  var chnl = this.chnls[name];
   if (fnc) this.opts[FORCE_NEW_CONNECTION] = fnc;
   if (chnl && !fnc) return chnl;
   chnl = new Channel(name, this);
