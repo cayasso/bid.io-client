@@ -59,17 +59,22 @@
           <ul class="nav nav-list bs-docs-sidenav affix-top">
             <li class=""><a href="index.html">Main</a></li>
             <li class="active"><a href="channel.js.html">channel.js</a></li>
+            <li class=""><a href="events.js.html">events.js</a></li>
             <li class=""><a href="index.js.html">index.js</a></li>
             <li class=""><a href="manager.js.html">manager.js</a></li>
             <li class=""><a href="parser.js.html">parser.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
-              <li><a href="#debug"><i class="alert alert-success"></i>debug</a>
+              <li><a href="#Emitter"><i class="alert alert-success"></i>Emitter</a>
               </li>
               <li><a href="#exports"><i class="alert alert-success"></i>exports</a>
               </li>
+              <li><a href="#__proto__"><i class="alert alert-success"></i>__proto__</a>
+              </li>
               <li><a href="#connect"><i class="alert alert-info"></i>connect</a>
+              </li>
+              <li><a href="#bind"><i class="alert alert-info"></i>bind</a>
               </li>
               <li><a href="#fetch"><i class="alert alert-info"></i>fetch</a>
               </li>
@@ -87,15 +92,16 @@
           </div>
         </div>
         <div class="span9">
-          <section id="debug">
-            <h1>debug</h1>
+          <section id="Emitter">
+            <h1>Emitter</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>debug</span>
+              <div class="label label-success radius ctx-type">declaration</div><span>Emitter</span>
             </p>
           </section>
           <div class="description"><p>Module dependencies.</p> 
-            <pre><code class="language-javascript">var debug = require('debug')('bid.io-client:channel');
+            <pre><code class="language-javascript">var Emitter = require('./events').EventEmitter;
+var debug = require('debug')('bid.io-client:channel');
 var parser = require('./parser');
 var encode = parser.encode;
 var decode = parser.decode;</code></pre>
@@ -110,11 +116,37 @@ var decode = parser.decode;</code></pre>
           <div class="description"><p>Module exports.</p> 
             <pre><code class="language-javascript">module.exports = Channel;</code></pre>
           </div>
+          <section id="__proto__">
+            <h1>__proto__</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>Channel.prototype__proto__</span>
+            </p>
+          </section>
+          <div class="description"><p>Inherits from <code>EventEmitter</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.__proto__ = Emitter.prototype;</code></pre>
+          </div>
           <section id="connect">
             <h1>connect</h1>
             <h5 class="subheader"></h5>
             <p>
               <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.connect()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <div class="description"><p>Get a <code>socket</code> instance and connect to it.</p> 
+            <pre><code class="language-javascript">Channel.prototype.connect = function () {
+  this.socket = this.io.connect(this.url + '/' + this.name, this.opts);
+  for (var i = 0, e; e = this.events[i]; i++) {
+    this.bind(e);
+  }
+  return this;
+};</code></pre>
+          </div>
+          <section id="bind">
+            <h1>bind</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.bind()</span> -><span>Channel</span>
             </p>
           </section>
           <table class="table table-bordered table-striped">
@@ -127,21 +159,19 @@ var decode = parser.decode;</code></pre>
             </thead>
             <tbody>
               <tr>
-                <td>fn</td>
-                <td>Function</td>
-                <td>callback</td>
+                <td>ev</td>
+                <td>String</td>
+                <td>event name</td>
               </tr>
             </tbody>
           </table>
-          <div class="description"><p>Get a <code>socket</code> instance and connect to it.</p> 
-            <pre><code class="language-javascript">Channel.prototype.connect = function (fn) {
+          <div class="description"><p>Bind socket events to channel.</p> 
+            <pre><code class="language-javascript">Channel.prototype.bind = function (ev) {
   var self = this;
-  //io = ('undefined' !== typeof eio) ? eio : io;
-  this.socket = this.io.connect(self.url + '/' + self.name, self.opts);
-  this.socket.on('connect', function () {
-    if (fn) fn(self);
+  self.socket.on(ev, function () {
+    var args = Array.prototype.slice.call(arguments);
+    self.emit.apply(self, [ev].concat(args));
   });
-  return this;
 };</code></pre>
           </div>
           <section id="fetch">

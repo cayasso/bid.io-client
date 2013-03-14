@@ -57,19 +57,257 @@
       <div class="row">
         <div class="span3 bs-docs-sidebar">
           <ul class="nav nav-list bs-docs-sidenav affix-top">
-            <li class="active"><a href="index.html">Main</a></li>
+            <li class=""><a href="index.html">Main</a></li>
             <li class=""><a href="channel.js.html">channel.js</a></li>
-            <li class=""><a href="events.js.html">events.js</a></li>
+            <li class="active"><a href="events.js.html">events.js</a></li>
             <li class=""><a href="index.js.html">index.js</a></li>
             <li class=""><a href="manager.js.html">manager.js</a></li>
             <li class=""><a href="parser.js.html">parser.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#EventEmitter"><i class="alert alert-success"></i>EventEmitter</a>
+              </li>
+              <li><a href="#EventEmitter"><i class="alert alert-info"></i>EventEmitter</a>
+              </li>
+              <li><a href="#on"><i class="alert alert-info"></i>on</a>
+              </li>
+              <li><a href="#once"><i class="alert alert-info"></i>once</a>
+              </li>
+              <li><a href="#removeListener"><i class="alert alert-info"></i>removeListener</a>
+              </li>
+              <li><a href="#removeAllListeners"><i class="alert alert-info"></i>removeAllListeners</a>
+              </li>
+              <li><a href="#listeners"><i class="alert alert-info"></i>listeners</a>
+              </li>
+              <li><a href="#emit"><i class="alert alert-info"></i>emit</a>
+              </li>
+              <li><a href="#isArray"><i class="alert alert-info"></i>isArray</a>
+              </li>
             </ul>
           </div>
         </div>
         <div class="span9">
+          <section id="EventEmitter">
+            <h1>EventEmitter</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>exports.EventEmitter</span>
+            </p>
+          </section>
+          <div class="description"><p>Expose constructor.</p> 
+            <pre><code class="language-javascript">exports.EventEmitter = EventEmitter;</code></pre>
+          </div>
+          <section id="EventEmitter">
+            <h1>EventEmitter</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>EventEmitter()</span>
+            </p>
+          </section>
+          <div class="description"><p>Event emitter constructor.</p> 
+            <pre><code class="language-javascript">function EventEmitter () {};</code></pre>
+          </div>
+          <section id="on">
+            <h1>on</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.on()</span>
+            </p>
+          </section>
+          <div class="description"><p>Adds a listener</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.on = function (name, fn) {
+  if (!this.$events) {
+    this.$events = {};
+  }
+
+  if (!this.$events[name]) {
+    this.$events[name] = fn;
+  } else if (isArray(this.$events[name])) {
+    this.$events[name].push(fn);
+  } else {
+    this.$events[name] = [this.$events[name], fn];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.addListener = EventEmitter.prototype.on;</code></pre>
+          </div>
+          <section id="once">
+            <h1>once</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.once()</span>
+            </p>
+          </section>
+          <div class="description"><p>Adds a volatile listener.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.once = function (name, fn) {
+  var self = this;
+
+  function on () {
+    self.removeListener(name, on);
+    fn.apply(this, arguments);
+  }
+
+  on.listener = fn;
+  this.on(name, on);
+
+  return this;
+};</code></pre>
+          </div>
+          <section id="removeListener">
+            <h1>removeListener</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.removeListener()</span>
+            </p>
+          </section>
+          <div class="description"><p>Removes a listener.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.removeListener = function (name, fn) {
+  if (this.$events &amp;&amp; this.$events[name]) {
+    var list = this.$events[name];
+
+    if (isArray(list)) {
+      var pos = -1;
+
+      for (var i = 0, l = list.length; i &lt; l; i++) {
+        if (list[i] === fn || (list[i].listener &amp;&amp; list[i].listener === fn)) {
+          pos = i;
+          break;
+        }
+      }
+
+      if (pos &lt; 0) {
+        return this;
+      }
+
+      list.splice(pos, 1);
+
+      if (!list.length) {
+        delete this.$events[name];
+      }
+    } else if (list === fn || (list.listener &amp;&amp; list.listener === fn)) {
+      delete this.$events[name];
+    }
+  }
+
+  return this;
+};</code></pre>
+          </div>
+          <section id="removeAllListeners">
+            <h1>removeAllListeners</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.removeAllListeners()</span>
+            </p>
+          </section>
+          <div class="description"><p>Removes all listeners for an event.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.removeAllListeners = function (name) {
+  if (name === undefined) {
+    this.$events = {};
+    return this;
+  }
+
+  if (this.$events &amp;&amp; this.$events[name]) {
+    this.$events[name] = null;
+  }
+
+  return this;
+};</code></pre>
+          </div>
+          <section id="listeners">
+            <h1>listeners</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.listeners()</span>
+            </p>
+          </section>
+          <div class="description"><p>Gets all listeners for a certain event.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.listeners = function (name) {
+  if (!this.$events) {
+    this.$events = {};
+  }
+
+  if (!this.$events[name]) {
+    this.$events[name] = [];
+  }
+
+  if (!isArray(this.$events[name])) {
+    this.$events[name] = [this.$events[name]];
+  }
+
+  return this.$events[name];
+};</code></pre>
+          </div>
+          <section id="emit">
+            <h1>emit</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.emit()</span>
+            </p>
+          </section>
+          <div class="description"><p>Emits an event.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.emit = function (name) {
+  if (!this.$events) {
+    return false;
+  }
+
+  var handler = this.$events[name];
+
+  if (!handler) {
+    return false;
+  }
+
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  if ('function' == typeof handler) {
+    handler.apply(this, args);
+  } else if (isArray(handler)) {
+    var listeners = handler.slice();
+
+    for (var i = 0, l = listeners.length; i &lt; l; i++) {
+      listeners[i].apply(this, args);
+    }
+  } else {
+    return false;
+  }
+
+  return true;
+};</code></pre>
+          </div>
+          <section id="isArray">
+            <h1>isArray</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>isArray()</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>obj</td>
+                <td>Object</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Checks if the given object is an Array.</p>
+
+<pre><code>isArray([]); // true
+isArray({}); // false
+</code></pre> 
+            <pre><code class="language-javascript">function isArray (obj) {
+  return '[object Array]' === Object.prototype.toString.call(obj);
+}</code></pre>
+          </div>
         </div>
       </div>
     </div>
