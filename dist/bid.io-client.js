@@ -160,24 +160,48 @@ function Channel (name, manager, fn) {
     'complete',
     'error'
   ];
+  this.events = [
+    'message',
+    'close',
+    'connect',
+    'connecting',
+    'connect_failed',
+    'reconnect',
+    'reconnecting',
+    'reconnect_failed',
+    'disconnect'
+  ];
   this.connect(fn);
 }
 
 /**
  * Get a `socket` instance and connect to it.
  *
- * @param {Function} fn callback
  * @return {Channel} self
  * @api public
  */
 
-Channel.prototype.connect = function (fn) {
+Channel.prototype.connect = function () {
+  this.socket = this.io.connect(this.url + '/' + this.name, this.opts);
+  this.bind();
+  return this;
+};
+
+/**
+ * Bind socket events to channel.
+ *
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.bind = function () {
   var self = this;
-  //io = ('undefined' !== typeof eio) ? eio : io;
-  this.socket = this.io.connect(self.url + '/' + self.name, self.opts);
-  this.socket.on('connect', function () {
-    if (fn) fn(self);
-  });
+  for (var i = 0, e; e = this.events[i], i++) {
+    this.socket.on(e, function () {
+      var args = Array.prototype.slice.call(arguments);
+      self.emit.apply(self, [e].concat(args));
+    });
+  }
   return this;
 };
 
@@ -429,9 +453,9 @@ function Manager (url, opts) {
  * @api public
  */
 
-Manager.prototype.join = function (name, fn) {
+Manager.prototype.join = function (name) {
   debug('joining channel %s', name);
-  var chnl = new Channel(name, this, fn);
+  var chnl = new Channel(name, this);
   this.chnls[name] = chnl;
   return this.chnls[name];
 };
