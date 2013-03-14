@@ -72,6 +72,8 @@
               </li>
               <li><a href="#Manager"><i class="alert alert-info"></i>Manager</a>
               </li>
+              <li><a href="#io"><i class="alert alert-info"></i>io</a>
+              </li>
               <li><a href="#join"><i class="alert alert-info"></i>join</a>
               </li>
               <li><a href="#leave"><i class="alert alert-info"></i>leave</a>
@@ -140,7 +142,44 @@ if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
   this.io = io;
   this.opts = opts;
   this.chnls = {};
+  this.socket = io.connect(url, opts);
 }</code></pre>
+          </div>
+          <section id="io">
+            <h1>io</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.io()</span> -><span>Manager</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td>the channel name</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback function</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Connect to a <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Manager.prototype.io = function (name) {
+  debug('joining channel %s', name);
+  var chnl = new Channel(name, this);
+  this.chnls[name] = chnl;
+  return this.chnls[name];
+};</code></pre>
           </div>
           <section id="join">
             <h1>join</h1>
