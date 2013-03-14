@@ -141,13 +141,12 @@ module.exports = Channel;
  *
  * @param {String} name channel name
  * @param {Manager} manager manager instance
- * @param {Function} fn callback
  * @api private
  */
 
-function Channel (name, manager, io) {
-  this.io = io;
+function Channel (name, manager) {
   this.opts = manager.opts;
+  this.io = manager.io;
   this.url = manager.url;
   this.ns = manager.ns || 'stream';
   this.name = name;
