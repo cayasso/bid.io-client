@@ -72,6 +72,8 @@
               </li>
               <li><a href="#Manager"><i class="alert alert-info"></i>Manager</a>
               </li>
+              <li><a href="#connect"><i class="alert alert-info"></i>connect</a>
+              </li>
               <li><a href="#join"><i class="alert alert-info"></i>join</a>
               </li>
               <li><a href="#leave"><i class="alert alert-info"></i>leave</a>
@@ -90,6 +92,9 @@
           <div class="description"><p>Module dependencies.</p> 
             <pre><code class="language-javascript">var Channel = require('./channel');
 var debug = require('debug')('bid.io-client:manager');
+
+
+var FORCE_NEW_CONNECTION = 'force new connection';
 
 if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
   throw Error('Please include socket.io client.');
@@ -140,8 +145,45 @@ if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
   this.io = io;
   this.opts = opts;
   this.chnls = {};
-  this.socket = io.connect(url, opts);
 }</code></pre>
+          </div>
+          <section id="connect">
+            <h1>connect</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.connect()</span> -><span>Socket</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>url</td>
+                <td>String,Object</td>
+                <td>the connection `url` or `options`</td>
+              </tr>
+              <tr>
+                <td>opts</td>
+                <td>Object</td>
+                <td>`socket.io` connection options</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Connect with regular <code>socket.io</code>.</p> 
+            <pre><code class="language-javascript">Manager.prototype.connect = function (url, opts) {
+  if ('string' !== typeof url) {
+    opts = url;
+    url = null;
+  }
+  url = url || this.url;
+  return io.connect(url, opts);
+};</code></pre>
           </div>
           <section id="join">
             <h1>join</h1>
@@ -172,9 +214,14 @@ if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
             </tbody>
           </table>
           <div class="description"><p>Connect to a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Manager.prototype.join = function (name) {
+            <pre><code class="language-javascript">Manager.prototype.join = function (name, opts) {
+  opts = opts || {};
   debug('joining channel %s', name);
-  var chnl = new Channel(name, this);
+  var fnc = opts[FORCE_NEW_CONNECTION];
+  var chnl = chnls[name];
+  if (fnc) this.opts[FORCE_NEW_CONNECTION] = fnc;
+  if (chnl &amp;&amp; !fnc) return chnl;
+  chnl = new Channel(name, this);
   this.chnls[name] = chnl;
   return this.chnls[name];
 };</code></pre>

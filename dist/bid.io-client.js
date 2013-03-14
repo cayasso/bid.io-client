@@ -145,9 +145,9 @@ module.exports = Channel;
  * @api private
  */
 
-function Channel (name, manager, fn) {
+function Channel (name, manager, io) {
+  this.io = io;
   this.opts = manager.opts;
-  this.io = manager.io;
   this.url = manager.url;
   this.ns = manager.ns || 'stream';
   this.name = name;
@@ -610,6 +610,9 @@ exports.Channel = Channel;
 var Channel = require('./channel');
 var debug = require('debug')('bid.io-client:manager');
 
+
+var FORCE_NEW_CONNECTION = 'force new connection';
+
 if ('undefined' === typeof eio && 'undefined' === typeof io ) {
   throw Error('Please include socket.io client.');
 }
@@ -634,8 +637,25 @@ function Manager (url, opts) {
   this.io = io;
   this.opts = opts;
   this.chnls = {};
-  this.socket = io.connect(url, opts);
 }
+
+/**
+ * Connect with regular `socket.io`.
+ *
+ * @param {String|Object} url the connection `url` or `options`
+ * @param {Object} opts `socket.io` connection options
+ * @return {Socket} socket insntance
+ * @api public
+ */
+
+Manager.prototype.connect = function (url, opts) {
+  if ('string' !== typeof url) {
+    opts = url;
+    url = null;
+  }
+  url = url || this.url;
+  return io.connect(url, opts);
+};
 
 /**
  * Connect to a `channel`.
@@ -646,9 +666,14 @@ function Manager (url, opts) {
  * @api public
  */
 
-Manager.prototype.join = function (name) {
+Manager.prototype.join = function (name, opts) {
+  opts = opts || {};
   debug('joining channel %s', name);
-  var chnl = new Channel(name, this);
+  var fnc = opts[FORCE_NEW_CONNECTION];
+  var chnl = chnls[name];
+  if (fnc) this.opts[FORCE_NEW_CONNECTION] = fnc;
+  if (chnl && !fnc) return chnl;
+  chnl = new Channel(name, this);
   this.chnls[name] = chnl;
   return this.chnls[name];
 };
