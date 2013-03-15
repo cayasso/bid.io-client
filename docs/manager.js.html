@@ -78,6 +78,8 @@
               </li>
               <li><a href="#leave"><i class="alert alert-info"></i>leave</a>
               </li>
+              <li><a href="#getChannel"><i class="alert alert-info"></i>getChannel</a>
+              </li>
             </ul>
           </div>
         </div>
@@ -259,6 +261,36 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
     debug('unable to find channel %s', name);
   }
   return this;
+};</code></pre>
+          </div>
+          <section id="getChannel">
+            <h1>getChannel</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.getChannel()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td>the name of the `channel` to get</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Get a stored <code>channel</code> connection for use.</p> 
+            <pre><code class="language-javascript">Manager.prototype.getChannel = function (name) {
+  var chnl = this.chnls[name];
+  if (!chnl) return debug(&quot;Channel '%s' doesn't exist.&quot;, name);
+  return chnl;
 };</code></pre>
           </div>
         </div>

@@ -738,6 +738,20 @@ Manager.prototype.leave = function (name) {
   return this;
 };
 
+/**
+ * Get a stored `channel` connection for use.
+ *
+ * @param {String} name the name of the `channel` to get
+ * @return {Channel} the `channel` instance
+ * @api public
+ */
+
+Manager.prototype.getChannel = function (name) {
+  var chnl = this.chnls[name];
+  if (!chnl) return debug("Channel '%s' doesn't exist.", name);
+  return chnl;
+};
+
 });require.register("parser.js", function(module, exports, require, global){
 
 /**
