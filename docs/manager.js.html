@@ -92,13 +92,7 @@
           <div class="description"><p>Module dependencies.</p> 
             <pre><code class="language-javascript">var Channel = require('./channel');
 var debug = require('debug')('bid.io-client:manager');
-
-
-var FORCE_NEW_CONNECTION = 'force new connection';
-
-if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
-  throw Error('Please include socket.io client.');
-}</code></pre>
+var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
           </div>
           <section id="exports">
             <h1>exports</h1>
@@ -127,6 +121,11 @@ if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
             </thead>
             <tbody>
               <tr>
+                <td>io</td>
+                <td>Object</td>
+                <td>socket.io client object</td>
+              </tr>
+              <tr>
                 <td>url</td>
                 <td>String</td>
                 <td>the connection url</td>
@@ -139,7 +138,7 @@ if ('undefined' === typeof eio &amp;&amp; 'undefined' === typeof io ) {
             </tbody>
           </table>
           <div class="description"><p>Manager constructor.</p> 
-            <pre><code class="language-javascript">function Manager (url, opts) {
+            <pre><code class="language-javascript">function Manager (io, url, opts) {
   opts = opts || {};
   this.url = url;
   this.io = io;

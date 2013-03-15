@@ -591,10 +591,12 @@ module.exports = exports = factory;
  * @api public
  */
 
-function factory(uri, opts) {
+function factory(io, uri, opts) {
   opts = opts || {};
-  io = ('undefined' !== typeof eio) ? eio : io;
-  return new Manager(uri, opts);
+  if (!io.protocol || !io.connect ) {
+    throw Error('Please include socket.io client.');
+  }
+  return new Manager(io, uri, opts);
 }
 
 /**
@@ -621,13 +623,7 @@ exports.Channel = Channel;
 
 var Channel = require('./channel');
 var debug = require('debug')('bid.io-client:manager');
-
-
 var FORCE_NEW_CONNECTION = 'force new connection';
-
-if ('undefined' === typeof eio && 'undefined' === typeof io ) {
-  throw Error('Please include socket.io client.');
-}
 
 /**
  * Module exports.
@@ -638,12 +634,13 @@ module.exports = Manager;
 /**
  * Manager constructor.
  *
+ * @param {Object} io socket.io client object
  * @param {String} url the connection url
  * @param {Object} opts options
  * @api public
  */
 
-function Manager (url, opts) {
+function Manager (io, url, opts) {
   opts = opts || {};
   this.url = url;
   this.io = io;

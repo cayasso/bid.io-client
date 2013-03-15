@@ -112,10 +112,12 @@ var parser = require('./parser');</code></pre>
           <div class="description"><p>Looks up an existing <code>Manager</code> for multiplexing.</p>
 
 <h2>If the user summons</h2> 
-            <pre><code class="language-javascript">function factory(uri, opts) {
+            <pre><code class="language-javascript">function factory(io, uri, opts) {
   opts = opts || {};
-  io = ('undefined' !== typeof eio) ? eio : io;
-  return new Manager(uri, opts);
+  if (!io.protocol || !io.connect ) {
+    throw Error('Please include socket.io client.');
+  }
+  return new Manager(io, uri, opts);
 }</code></pre>
           </div>
           <section id="protocol">

@@ -1,4 +1,5 @@
 REPORTER = spec
+TESTS = $(shell find test/ -name '*.test.js')
 FILE = dist/bid.io-client.js
 MINFILE = dist/bid.io-client.min.js
 
@@ -7,7 +8,7 @@ clean:
 	mkdir dist/
 
 test:
-	@./node_modules/.bin/mocha \
+	@./node_modules/.bin/mocha $(TESTS) \
 		--reporter $(REPORTER) \
 		--bail
 
