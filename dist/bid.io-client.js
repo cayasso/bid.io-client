@@ -147,12 +147,13 @@ module.exports = Channel;
  */
 
 function Channel (name, manager) {
-  this.io = io;
+  this.io = manager.io;
   this.opts = manager.opts;
   this.url = manager.url;
   this.ns = manager.ns || 'stream';
   this.name = name;
   this.watches = {};
+  this.evts = {};
   this.actions = [
     'fetch',
     'query',
@@ -198,6 +199,21 @@ Channel.prototype.connect = function () {
 };
 
 /**
+ * Disconnect from `channel`.
+ *
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.disconnect = function () {
+  for (var i = 0, e; e = this.events[i]; i++) {
+    this.unbind(e);
+    this.socket.disconnect();
+  }
+  return this;
+};
+
+/**
  * Bind socket events to channel.
  *
  * @param {String} ev event name
@@ -207,10 +223,25 @@ Channel.prototype.connect = function () {
 
 Channel.prototype.bind = function (ev) {
   var self = this;
-  self.socket.on(ev, function () {
+  this.evts[ev] = function () {
     var args = Array.prototype.slice.call(arguments);
     self.emit.apply(self, [ev].concat(args));
-  });
+  };
+  self.socket.on(ev, this.evts[ev]);
+  return this;
+};
+
+/**
+ * Bind socket events to channel.
+ *
+ * @param {String} ev event name
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.unbind = function (ev) {
+  this.socket.removeListener(ev, this.evts[ev]);
+  return this;
 };
 
 /**
@@ -663,7 +694,7 @@ Manager.prototype.connect = function (url, opts) {
     url = null;
   }
   url = url || this.url;
-  return io.connect(url, opts);
+  return this.io.connect(url, opts);
 };
 
 /**

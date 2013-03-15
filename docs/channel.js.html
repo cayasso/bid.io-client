@@ -74,7 +74,11 @@
               </li>
               <li><a href="#connect"><i class="alert alert-info"></i>connect</a>
               </li>
+              <li><a href="#disconnect"><i class="alert alert-info"></i>disconnect</a>
+              </li>
               <li><a href="#bind"><i class="alert alert-info"></i>bind</a>
+              </li>
+              <li><a href="#unbind"><i class="alert alert-info"></i>unbind</a>
               </li>
               <li><a href="#fetch"><i class="alert alert-info"></i>fetch</a>
               </li>
@@ -145,6 +149,22 @@ var packets = parser.packets;</code></pre>
   return this;
 };</code></pre>
           </div>
+          <section id="disconnect">
+            <h1>disconnect</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.disconnect()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <div class="description"><p>Disconnect from <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.disconnect = function () {
+  for (var i = 0, e; e = this.events[i]; i++) {
+    this.unbind(e);
+    this.socket.disconnect();
+  }
+  return this;
+};</code></pre>
+          </div>
           <section id="bind">
             <h1>bind</h1>
             <h5 class="subheader"></h5>
@@ -171,10 +191,41 @@ var packets = parser.packets;</code></pre>
           <div class="description"><p>Bind socket events to channel.</p> 
             <pre><code class="language-javascript">Channel.prototype.bind = function (ev) {
   var self = this;
-  self.socket.on(ev, function () {
+  this.evts[ev] = function () {
     var args = Array.prototype.slice.call(arguments);
     self.emit.apply(self, [ev].concat(args));
-  });
+  };
+  self.socket.on(ev, this.evts[ev]);
+  return this;
+};</code></pre>
+          </div>
+          <section id="unbind">
+            <h1>unbind</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.unbind()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ev</td>
+                <td>String</td>
+                <td>event name</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Bind socket events to channel.</p> 
+            <pre><code class="language-javascript">Channel.prototype.unbind = function (ev) {
+  this.socket.removeListener(ev, this.evts[ev]);
+  return this;
 };</code></pre>
           </div>
           <section id="fetch">

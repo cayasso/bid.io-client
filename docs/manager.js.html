@@ -181,7 +181,7 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
     url = null;
   }
   url = url || this.url;
-  return io.connect(url, opts);
+  return this.io.connect(url, opts);
 };</code></pre>
           </div>
           <section id="join">
