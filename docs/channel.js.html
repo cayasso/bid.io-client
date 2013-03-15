@@ -82,6 +82,8 @@
               </li>
               <li><a href="#cancel"><i class="alert alert-info"></i>cancel</a>
               </li>
+              <li><a href="#pending"><i class="alert alert-info"></i>pending</a>
+              </li>
               <li><a href="#complete"><i class="alert alert-info"></i>complete</a>
               </li>
               <li><a href="#watch"><i class="alert alert-info"></i>watch</a>
@@ -104,7 +106,8 @@
 var debug = require('debug')('bid.io-client:channel');
 var parser = require('./parser');
 var encode = parser.encode;
-var decode = parser.decode;</code></pre>
+var decode = parser.decode;
+var packets = parser.packets;</code></pre>
           </div>
           <section id="exports">
             <h1>exports</h1>
@@ -204,7 +207,7 @@ var decode = parser.decode;</code></pre>
           </table>
           <div class="description"><p>Fetch a <code>bid</code> from server.</p> 
             <pre><code class="language-javascript">Channel.prototype.fetch = function (id, fn) {
-  this.send(parser.FETCH, id, fn);
+  return this.send('fetch', id, fn);
 };</code></pre>
           </div>
           <section id="open">
@@ -242,8 +245,7 @@ var decode = parser.decode;</code></pre>
           </table>
           <div class="description"><p>Lock a <code>bid</code> by opening it.</p> 
             <pre><code class="language-javascript">Channel.prototype.open = function (id, owner, fn) {
-  this.send(parser.LOCK, id, owner, fn);
-  return this;
+  return this.send('lock', id, owner, fn);
 };</code></pre>
           </div>
           <section id="cancel">
@@ -281,8 +283,45 @@ var decode = parser.decode;</code></pre>
           </table>
           <div class="description"><p>Cancel a <code>bid</code> by unlocking it.</p> 
             <pre><code class="language-javascript">Channel.prototype.cancel = function (id, owner, fn) {
-  this.send(parser.UNLOCK, id, owner, fn);
-  return this;
+  return this.send('unlock', id, owner, fn);
+};</code></pre>
+          </div>
+          <section id="pending">
+            <h1>pending</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.pending()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id</td>
+              </tr>
+              <tr>
+                <td>owner</td>
+                <td>Object</td>
+                <td>owner object with at least an id attribute</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Set <code>bid</code> to pending.</p> 
+            <pre><code class="language-javascript">Channel.prototype.pending = function (id, owner, fn) {
+  return this.send('pending', id, owner, fn);
 };</code></pre>
           </div>
           <section id="complete">
@@ -320,8 +359,7 @@ var decode = parser.decode;</code></pre>
           </table>
           <div class="description"><p>Complete (close) a <code>bid</code>.</p> 
             <pre><code class="language-javascript">Channel.prototype.complete = function (id, owner, fn) {
-  this.send(parser.COMPLETE, id, owner, fn);
-  return this;
+  return this.send('complete', id, owner, fn);
 };</code></pre>
           </div>
           <section id="watch">
@@ -378,14 +416,13 @@ var decode = parser.decode;</code></pre>
   // validate action
   var valid = function (action) {
     actions = actions.toString();
-    action = action.toLowerCase();
     return ~actions.indexOf(action);
   };
   self.watches[bidId] = function cb (packet) {
     var result = decode(packet);
     var id = result.id;
     var type = result.type;
-    var action = parser.types[type];
+    var action = type;
     var isValid = valid(action);
 
     if (bidId &amp;&amp; id == bidId &amp;&amp; isValid) {

@@ -129,6 +129,7 @@ var debug = require('debug')('bid.io-client:channel');
 var parser = require('./parser');
 var encode = parser.encode;
 var decode = parser.decode;
+var packets = parser.packets;
 
 /**
  * Module exports.
@@ -141,22 +142,23 @@ module.exports = Channel;
  *
  * @param {String} name channel name
  * @param {Manager} manager manager instance
+ * @param {Function} fn callback
  * @api private
  */
 
 function Channel (name, manager) {
+  this.io = io;
   this.opts = manager.opts;
-  this.io = manager.io;
   this.url = manager.url;
   this.ns = manager.ns || 'stream';
   this.name = name;
   this.watches = {};
   this.actions = [
-    'join',
-    'leave',
     'fetch',
+    'query',
     'lock',
     'unlock',
+    'pending',
     'complete',
     'error'
   ];
@@ -171,7 +173,7 @@ function Channel (name, manager) {
     'reconnect_failed',
     'disconnect'
   ];
-  this.connect(fn);
+  this.connect();
 }
 
 /**
@@ -221,7 +223,7 @@ Channel.prototype.bind = function (ev) {
  */
 
 Channel.prototype.fetch = function (id, fn) {
-  this.send(parser.FETCH, id, fn);
+  return this.send('fetch', id, fn);
 };
 
 /**
@@ -235,8 +237,7 @@ Channel.prototype.fetch = function (id, fn) {
  */
 
 Channel.prototype.open = function (id, owner, fn) {
-  this.send(parser.LOCK, id, owner, fn);
-  return this;
+  return this.send('lock', id, owner, fn);
 };
 
 /**
@@ -250,8 +251,21 @@ Channel.prototype.open = function (id, owner, fn) {
  */
 
 Channel.prototype.cancel = function (id, owner, fn) {
-  this.send(parser.UNLOCK, id, owner, fn);
-  return this;
+  return this.send('unlock', id, owner, fn);
+};
+
+/**
+ * Set `bid` to pending.
+ *
+ * @param {String|Number} id the bid id
+ * @param {Object} owner owner object with at least an id attribute
+ * @param {Function} fn callback
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.pending = function (id, owner, fn) {
+  return this.send('pending', id, owner, fn);
 };
 
 /**
@@ -265,8 +279,7 @@ Channel.prototype.cancel = function (id, owner, fn) {
  */
 
 Channel.prototype.complete = function (id, owner, fn) {
-  this.send(parser.COMPLETE, id, owner, fn);
-  return this;
+  return this.send('complete', id, owner, fn);
 };
 
 /**
@@ -299,14 +312,13 @@ Channel.prototype.watch = function (bidId, actions, fn) {
   // validate action
   var valid = function (action) {
     actions = actions.toString();
-    action = action.toLowerCase();
     return ~actions.indexOf(action);
   };
   self.watches[bidId] = function cb (packet) {
     var result = decode(packet);
     var id = result.id;
     var type = result.type;
-    var action = parser.types[type];
+    var action = type;
     var isValid = valid(action);
 
     if (bidId && id == bidId && isValid) {
@@ -363,12 +375,13 @@ Channel.prototype.send = function (type, id, owner, fn) {
   var packet = encode({ type: type, id: id, data: data });
   this.socket.emit(this.ns, packet, function (packet) {
     var result = decode(packet);
-    if (parser.ERROR === result.type) {
+    if (packets.error === result.type) {
       fn && fn(result.data);
     } else {
       fn && fn(null, result.data);
     }
   });
+  return this;
 };
 });require.register("events.js", function(module, exports, require, global){
 /**
@@ -669,7 +682,7 @@ Manager.prototype.join = function (name, opts) {
   opts = opts || {};
   debug('joining channel %s', name);
   var fnc = opts[FORCE_NEW_CONNECTION];
-  var chnl = chnls[name];
+  var chnl = this.chnls[name];
   if (fnc) this.opts[FORCE_NEW_CONNECTION] = fnc;
   if (chnl && !fnc) return chnl;
   chnl = new Channel(name, this);
@@ -719,71 +732,29 @@ exports.protocol = 1;
  * @api public
  */
 
-exports.types = [
-  'JOIN',
-  'LEAVE',
-  'FETCH',
-  'LOCK',
-  'UNLOCK',
-  'COMPLETE',
-  'ERROR'
-];
+var packets = exports.packets = {
+  fetch:    0,
+  query:    1,
+  lock:     2,
+  unlock:   3,
+  pending:  4,
+  complete: 5,
+  error:    6
+};
 
 /**
- * Packet type `join`.
+ * Packet keys.
  *
  * @api public
  */
 
-exports.JOIN = 0;
+var packetslist = exports.packetslist = keys(packets);
 
 /**
- * Packet type `leave`.
- *
- * @api public
+ * Premade error packet.
  */
 
-exports.LEAVE = 1;
-
-/**
- * Packet type `fetch`.
- *
- * @api public
- */
-
-exports.FETCH = 2;
-
-/**
- * Packet type `lock`.
- *
- * @api public
- */
-
-exports.LOCK = 3;
-
-/**
- * Packet type `unlock`.
- *
- * @api public
- */
-
-exports.UNLOCK = 4;
-
-/**
- * Packet type `complete`.
- *
- * @api public
- */
-
-exports.COMPLETE = 5;
-
-/**
- * Packet type `error`.
- *
- * @api public
- */
-
-exports.ERROR = 6;
+var error = { type: 'error', data: 'parser error' };
 
 /**
  * Encode.
@@ -797,7 +768,7 @@ exports.encode = function(obj){
   var str = '';
 
   // first is type
-  str += obj.type;
+  str += packets[obj.type];
 
   // immediately followed by the bid id
   if (null != obj.id) {
@@ -828,9 +799,8 @@ exports.decode = function (str) {
   var d = 0;
 
   // look up type
-  p.type = Number(str.charAt(0));
-
-  if (null == exports.types[p.type]) return error();
+  p.type = packetslist[Number(str.charAt(0))];
+  if (null == p.type) return error;
 
   // look up id
   var next = str.charAt(i + 1);
@@ -851,8 +821,8 @@ exports.decode = function (str) {
   if (str.charAt(++i)) {
     try {
       p.data = JSON.parse(str.substr(i));
-    } catch(e){ console.log(e);
-      return error(e);
+    } catch(e){
+      return error;
     }
   }
 
@@ -860,12 +830,23 @@ exports.decode = function (str) {
   return p;
 };
 
-function error(data){
-  return {
-    type: exports.ERROR,
-    message: 'parser error'
-  };
-}
+/**
+ * Gets the keys for an object.
+ *
+ * @return {Array} keys
+ * @api private
+ */
 
+function keys (obj){
+  if (Object.keys) return Object.keys(obj);
+  var arr = [];
+  var has = Object.prototype.hasOwnProperty;
+  for (var i in obj) {
+    if (has.call(obj, i)) {
+      arr.push(i);
+    }
+  }
+  return arr;
+}
 });var exp = require('index.js');if ("undefined" != typeof module) module.exports = exp;else bio = exp;
 })();

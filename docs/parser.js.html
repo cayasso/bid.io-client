@@ -70,21 +70,11 @@
               </li>
               <li><a href="#protocol"><i class="alert alert-success"></i>protocol</a>
               </li>
-              <li><a href="#types"><i class="alert alert-success"></i>types</a>
+              <li><a href="#packets"><i class="alert alert-success"></i>packets</a>
               </li>
-              <li><a href="#JOIN"><i class="alert alert-success"></i>JOIN</a>
+              <li><a href="#packetslist"><i class="alert alert-success"></i>packetslist</a>
               </li>
-              <li><a href="#LEAVE"><i class="alert alert-success"></i>LEAVE</a>
-              </li>
-              <li><a href="#FETCH"><i class="alert alert-success"></i>FETCH</a>
-              </li>
-              <li><a href="#LOCK"><i class="alert alert-success"></i>LOCK</a>
-              </li>
-              <li><a href="#UNLOCK"><i class="alert alert-success"></i>UNLOCK</a>
-              </li>
-              <li><a href="#COMPLETE"><i class="alert alert-success"></i>COMPLETE</a>
-              </li>
-              <li><a href="#ERROR"><i class="alert alert-success"></i>ERROR</a>
+              <li><a href="#error"><i class="alert alert-success"></i>error</a>
               </li>
               <li><a href="#encode"><i class="alert alert-info"></i>encode</a>
               </li>
@@ -114,93 +104,43 @@
           <div class="description"><p>Protocol version.</p> 
             <pre><code class="language-javascript">exports.protocol = 1;</code></pre>
           </div>
-          <section id="types">
-            <h1>types</h1>
+          <section id="packets">
+            <h1>packets</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.types</span>
+              <div class="label label-success radius ctx-type">declaration</div><span>packets</span>
             </p>
           </section>
           <div class="description"><p>Packet types.</p> 
-            <pre><code class="language-javascript">exports.types = [
-  'JOIN',
-  'LEAVE',
-  'FETCH',
-  'LOCK',
-  'UNLOCK',
-  'COMPLETE',
-  'ERROR'
-];</code></pre>
+            <pre><code class="language-javascript">var packets = exports.packets = {
+  fetch:    0,
+  query:    1,
+  lock:     2,
+  unlock:   3,
+  pending:  4,
+  complete: 5,
+  error:    6
+};</code></pre>
           </div>
-          <section id="JOIN">
-            <h1>JOIN</h1>
+          <section id="packetslist">
+            <h1>packetslist</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.JOIN</span>
+              <div class="label label-success radius ctx-type">declaration</div><span>packetslist</span>
             </p>
           </section>
-          <div class="description"><p>Packet type <code>join</code>.</p> 
-            <pre><code class="language-javascript">exports.JOIN = 0;</code></pre>
+          <div class="description"><p>Packet keys.</p> 
+            <pre><code class="language-javascript">var packetslist = exports.packetslist = keys(packets);</code></pre>
           </div>
-          <section id="LEAVE">
-            <h1>LEAVE</h1>
+          <section id="error">
+            <h1>error</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.LEAVE</span>
+              <div class="label label-success radius ctx-type">declaration</div><span>error</span>
             </p>
           </section>
-          <div class="description"><p>Packet type <code>leave</code>.</p> 
-            <pre><code class="language-javascript">exports.LEAVE = 1;</code></pre>
-          </div>
-          <section id="FETCH">
-            <h1>FETCH</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.FETCH</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet type <code>fetch</code>.</p> 
-            <pre><code class="language-javascript">exports.FETCH = 2;</code></pre>
-          </div>
-          <section id="LOCK">
-            <h1>LOCK</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.LOCK</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet type <code>lock</code>.</p> 
-            <pre><code class="language-javascript">exports.LOCK = 3;</code></pre>
-          </div>
-          <section id="UNLOCK">
-            <h1>UNLOCK</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.UNLOCK</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet type <code>unlock</code>.</p> 
-            <pre><code class="language-javascript">exports.UNLOCK = 4;</code></pre>
-          </div>
-          <section id="COMPLETE">
-            <h1>COMPLETE</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.COMPLETE</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet type <code>complete</code>.</p> 
-            <pre><code class="language-javascript">exports.COMPLETE = 5;</code></pre>
-          </div>
-          <section id="ERROR">
-            <h1>ERROR</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.ERROR</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet type <code>error</code>.</p> 
-            <pre><code class="language-javascript">exports.ERROR = 6;</code></pre>
+          <div class="description"><p>Premade error packet.</p> 
+            <pre><code class="language-javascript">var error = { type: 'error', data: 'parser error' };</code></pre>
           </div>
           <section id="encode">
             <h1>encode</h1>
@@ -230,7 +170,7 @@
   var str = '';
 
   // first is type
-  str += obj.type;
+  str += packets[obj.type];
 
   // immediately followed by the bid id
   if (null != obj.id) {
@@ -277,9 +217,8 @@
   var d = 0;
 
   // look up type
-  p.type = Number(str.charAt(0));
-
-  if (null == exports.types[p.type]) return error();
+  p.type = packetslist[Number(str.charAt(0))];
+  if (null == p.type) return error;
 
   // look up id
   var next = str.charAt(i + 1);
@@ -300,21 +239,14 @@
   if (str.charAt(++i)) {
     try {
       p.data = JSON.parse(str.substr(i));
-    } catch(e){ console.log(e);
-      return error(e);
+    } catch(e){
+      return error;
     }
   }
 
   debug('decoded %s as %j', str, p);
   return p;
-};
-
-function error(data){
-  return {
-    type: exports.ERROR,
-    message: 'parser error'
-  };
-}</code></pre>
+};</code></pre>
           </div>
         </div>
       </div>
