@@ -82,6 +82,8 @@
               </li>
               <li><a href="#fetch"><i class="alert alert-info"></i>fetch</a>
               </li>
+              <li><a href="#find"><i class="alert alert-info"></i>find</a>
+              </li>
               <li><a href="#open"><i class="alert alert-info"></i>open</a>
               </li>
               <li><a href="#cancel"><i class="alert alert-info"></i>cancel</a>
@@ -259,6 +261,39 @@ var packets = parser.packets;</code></pre>
           <div class="description"><p>Fetch a <code>bid</code> from server.</p> 
             <pre><code class="language-javascript">Channel.prototype.fetch = function (id, fn) {
   return this.send('fetch', id, fn);
+};</code></pre>
+          </div>
+          <section id="find">
+            <h1>find</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.find()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>query</td>
+                <td>String,Number,Object</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Fetch a <code>bid</code> or <code>bids</code> from server.</p> 
+            <pre><code class="language-javascript">Channel.prototype.find = function (query, fn) {
+  return this.send('query', '', query, fn);
 };</code></pre>
           </div>
           <section id="open">
