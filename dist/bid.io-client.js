@@ -447,7 +447,7 @@ Channel.prototype.request = function (packet, fn) {
 Channel.prototype.response = function (fn) {
   return function (packet) {
     var result = decode(packet);
-    if (packets.error === result.type) {
+    if ('error' == result.type) {
       if (fn) fn(result.data);
     } else {
       if (fn) fn(null, result.data);
