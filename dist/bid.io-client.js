@@ -423,7 +423,7 @@ Channel.prototype.send = function (type, id, owner, fn) {
 };
 
 /**
- * Send request to the server.
+ * Send request to the server .
  *
  * @param {Object} packet
  * @param {Function} fn callback function
