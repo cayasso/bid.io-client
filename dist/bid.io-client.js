@@ -816,13 +816,15 @@ exports.protocol = 1;
  */
 
 var packets = exports.packets = {
-  fetch:    0,
-  query:    1,
-  lock:     2,
-  unlock:   3,
-  pending:  4,
-  complete: 5,
-  error:    6
+  fetch:        0,
+  query:        1,
+  lock:         2,
+  unlock:       3,
+  pending:      4,
+  complete:     5,
+  forcelock:    6,
+  forceunlock:  7,
+  error:        8
 };
 
 /**
@@ -877,9 +879,7 @@ exports.encode = function(obj){
 
 exports.decode = function (str) {
 
-  var p = {};
-  var i = 0;
-  var d = 0;
+  var p = {}, i = 0;
 
   // look up type
   p.type = packetslist[Number(str.charAt(0))];
