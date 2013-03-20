@@ -822,7 +822,7 @@ var packets = exports.packets = {
   unlock:       3,
   pending:      4,
   complete:     5,
-  forcelock:    6,
+  claim:        6,
   forceunlock:  7,
   error:        8
 };
