@@ -299,6 +299,20 @@ Channel.prototype.cancel = function (id, owner, fn) {
 };
 
 /**
+ * Claim a `bid`.
+ *
+ * @param {String|Number} id the bid id
+ * @param {Object} owner owner object with at least an id attribute
+ * @param {Function} fn callback
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.claim = function (id, owner, fn) {
+  return this.send('claim', id, owner, fn);
+};
+
+/**
  * Set `bid` to pending.
  *
  * @param {String|Number} id the bid id
@@ -324,6 +338,20 @@ Channel.prototype.pending = function (id, owner, fn) {
 
 Channel.prototype.complete = function (id, owner, fn) {
   return this.send('complete', id, owner, fn);
+};
+
+/**
+ * Force unlock a `bid`.
+ *
+ * @param {String|Number} id the bid id
+ * @param {Object} owner owner object with at least an id attribute
+ * @param {Function} fn callback
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.forceunlock = function (id, owner, fn) {
+  return this.send('forceunlock', id, owner, fn);
 };
 
 /**

@@ -88,9 +88,13 @@
               </li>
               <li><a href="#cancel"><i class="alert alert-info"></i>cancel</a>
               </li>
+              <li><a href="#claim"><i class="alert alert-info"></i>claim</a>
+              </li>
               <li><a href="#pending"><i class="alert alert-info"></i>pending</a>
               </li>
               <li><a href="#complete"><i class="alert alert-info"></i>complete</a>
+              </li>
+              <li><a href="#forceunlock"><i class="alert alert-info"></i>forceunlock</a>
               </li>
               <li><a href="#watch"><i class="alert alert-info"></i>watch</a>
               </li>
@@ -372,6 +376,44 @@ var packets = parser.packets;</code></pre>
   return this.send('unlock', id, owner, fn);
 };</code></pre>
           </div>
+          <section id="claim">
+            <h1>claim</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.claim()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id</td>
+              </tr>
+              <tr>
+                <td>owner</td>
+                <td>Object</td>
+                <td>owner object with at least an id attribute</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Claim a <code>bid</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.claim = function (id, owner, fn) {
+  return this.send('claim', id, owner, fn);
+};</code></pre>
+          </div>
           <section id="pending">
             <h1>pending</h1>
             <h5 class="subheader"></h5>
@@ -446,6 +488,44 @@ var packets = parser.packets;</code></pre>
           <div class="description"><p>Complete (close) a <code>bid</code>.</p> 
             <pre><code class="language-javascript">Channel.prototype.complete = function (id, owner, fn) {
   return this.send('complete', id, owner, fn);
+};</code></pre>
+          </div>
+          <section id="forceunlock">
+            <h1>forceunlock</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.forceunlock()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id</td>
+              </tr>
+              <tr>
+                <td>owner</td>
+                <td>Object</td>
+                <td>owner object with at least an id attribute</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Force unlock a <code>bid</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.forceunlock = function (id, owner, fn) {
+  return this.send('forceunlock', id, owner, fn);
 };</code></pre>
           </div>
           <section id="watch">
