@@ -67,19 +67,45 @@
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#parse"><i class="alert alert-success"></i>parse</a>
+              </li>
+              <li><a href="#re"><i class="alert alert-success"></i>re</a>
+              </li>
             </ul>
           </div>
         </div>
         <div class="span9">
-          <section>
-            <h1></h1>
+          <section id="parse">
+            <h1>parse</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type"></div>
+              <div class="label label-success radius ctx-type">property</div><span>exports.parse</span>
             </p>
           </section>
-          <div class="description"> 
-            <pre><code class="language-javascript"></code></pre>
+          <div class="description"><p>Module exports</p> 
+            <pre><code class="language-javascript">exports.parse = parse;</code></pre>
+          </div>
+          <section id="re">
+            <h1>re</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>re</span>
+            </p>
+          </section>
+          <div class="description"><p>Parses an URI</p> 
+            <pre><code class="language-javascript">var re = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/;
+var parts = ['source', 'protocol', 'authority', 'userInfo', 'user', 'password',
+             'host', 'port', 'relative', 'path', 'directory', 'file', 'query',
+             'anchor'];
+
+function parse (str) {
+  var m = re.exec(str || '') , uri = {} , i = 14;
+  while (i--) {
+    uri[parts[i]] = m[i] || '';
+  }
+ 
+  return uri;
+}</code></pre>
           </div>
         </div>
       </div>
