@@ -63,6 +63,7 @@
             <li class=""><a href="index.js.html">index.js</a></li>
             <li class=""><a href="manager.js.html">manager.js</a></li>
             <li class=""><a href="parser.js.html">parser.js</a></li>
+            <li class=""><a href="url.js.html">url.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
@@ -115,6 +116,7 @@
             <pre><code class="language-javascript">var Emitter = require('./events').EventEmitter;
 var debug = require('debug')('bid.io-client:channel');
 var parser = require('./parser');
+var url = require('./url');
 var encode = parser.encode;
 var decode = parser.decode;
 var packets = parser.packets;</code></pre>
@@ -148,7 +150,8 @@ var packets = parser.packets;</code></pre>
           </section>
           <div class="description"><p>Get a <code>socket</code> instance and connect to it.</p> 
             <pre><code class="language-javascript">Channel.prototype.connect = function () {
-  this.socket = this.io.connect(this.url + '/' + this.name, this.opts);
+  var url = this.buildUrl(this.name);
+  this.socket = this.io.connect(url, this.opts);
   for (var i = 0, e; e = this.events[i]; i++) {
     this.bind(e);
   }

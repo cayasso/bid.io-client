@@ -127,6 +127,7 @@ if (window.localStorage) debug.enable(localStorage.debug);function require(p, pa
 var Emitter = require('./events').EventEmitter;
 var debug = require('debug')('bid.io-client:channel');
 var parser = require('./parser');
+var url = require('./url');
 var encode = parser.encode;
 var decode = parser.decode;
 var packets = parser.packets;
@@ -191,7 +192,8 @@ Channel.prototype.__proto__ = Emitter.prototype;
  */
 
 Channel.prototype.connect = function () {
-  this.socket = this.io.connect(this.url + '/' + this.name, this.opts);
+  var url = this.buildUrl(this.name);
+  this.socket = this.io.connect(url, this.opts);
   for (var i = 0, e; e = this.events[i]; i++) {
     this.bind(e);
   }
@@ -481,6 +483,20 @@ Channel.prototype.response = function (fn) {
       if (fn) fn(null, result.data);
     }
   };
+};
+
+/**
+ * Build a `channel` url.
+ *
+ * @param {String} channel the channel name
+ * @param {String} urlStr the provided url
+ * @return {String} url the chanel url
+ * @api private
+ */
+
+Channel.prototype.buildUrl = function (channel, urlStr) {
+  var obj = url.parse(urlStr || this.url);
+  return [obj.protocol, '://', obj.authority, obj.path, '/', channel, '?', obj.query].join('');
 };
 
 });require.register("events.js", function(module, exports, require, global){
@@ -959,5 +975,7 @@ function keys (obj){
   }
   return arr;
 }
+});require.register("url.js", function(module, exports, require, global){
+
 });var exp = require('index.js');if ("undefined" != typeof module) module.exports = exp;else bio = exp;
 })();

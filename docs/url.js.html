@@ -62,192 +62,24 @@
             <li class=""><a href="events.js.html">events.js</a></li>
             <li class=""><a href="index.js.html">index.js</a></li>
             <li class=""><a href="manager.js.html">manager.js</a></li>
-            <li class="active"><a href="parser.js.html">parser.js</a></li>
-            <li class=""><a href="url.js.html">url.js</a></li>
+            <li class=""><a href="parser.js.html">parser.js</a></li>
+            <li class="active"><a href="url.js.html">url.js</a></li>
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
-              <li><a href="#debug"><i class="alert alert-success"></i>debug</a>
-              </li>
-              <li><a href="#protocol"><i class="alert alert-success"></i>protocol</a>
-              </li>
-              <li><a href="#packets"><i class="alert alert-success"></i>packets</a>
-              </li>
-              <li><a href="#packetslist"><i class="alert alert-success"></i>packetslist</a>
-              </li>
-              <li><a href="#error"><i class="alert alert-success"></i>error</a>
-              </li>
-              <li><a href="#encode"><i class="alert alert-info"></i>encode</a>
-              </li>
-              <li><a href="#decode"><i class="alert alert-info"></i>decode</a>
-              </li>
             </ul>
           </div>
         </div>
         <div class="span9">
-          <section id="debug">
-            <h1>debug</h1>
+          <section>
+            <h1></h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>debug</span>
+              <div class="label label-success radius ctx-type"></div>
             </p>
           </section>
-          <div class="description"><p>Module dependencies.</p> 
-            <pre><code class="language-javascript">var debug = require('debug')('bid.io-parser');</code></pre>
-          </div>
-          <section id="protocol">
-            <h1>protocol</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">property</div><span>exports.protocol</span>
-            </p>
-          </section>
-          <div class="description"><p>Protocol version.</p> 
-            <pre><code class="language-javascript">exports.protocol = 1;</code></pre>
-          </div>
-          <section id="packets">
-            <h1>packets</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>packets</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet types.</p> 
-            <pre><code class="language-javascript">var packets = exports.packets = {
-  fetch:        0,
-  query:        1,
-  lock:         2,
-  unlock:       3,
-  pending:      4,
-  complete:     5,
-  claim:        6,
-  forceunlock:  7,
-  error:        8
-};</code></pre>
-          </div>
-          <section id="packetslist">
-            <h1>packetslist</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>packetslist</span>
-            </p>
-          </section>
-          <div class="description"><p>Packet keys.</p> 
-            <pre><code class="language-javascript">var packetslist = exports.packetslist = keys(packets);</code></pre>
-          </div>
-          <section id="error">
-            <h1>error</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-success radius ctx-type">declaration</div><span>error</span>
-            </p>
-          </section>
-          <div class="description"><p>Premade error packet.</p> 
-            <pre><code class="language-javascript">var error = { type: 'error', data: 'parser error' };</code></pre>
-          </div>
-          <section id="encode">
-            <h1>encode</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>exports.encode()</span> -><span>String</span>
-            </p>
-          </section>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:20%">Option name</th>
-                <th style="width:20%">Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>packet</td>
-                <td>Object</td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="description"><p>Encode.</p> 
-            <pre><code class="language-javascript">exports.encode = function(obj){
-  var str = '';
-
-  // first is type
-  str += packets[obj.type];
-
-  // immediately followed by the bid id
-  if (null != obj.id) {
-    str += obj.id;
-  }
-
-  // json data
-  if (null != obj.data) {
-    str += JSON.stringify(obj.data);
-  }
-
-  debug('encoded %j as %s', obj, str);
-  return str;
-};</code></pre>
-          </div>
-          <section id="decode">
-            <h1>decode</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>exports.decode()</span> -><span>Object</span>
-            </p>
-          </section>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:20%">Option name</th>
-                <th style="width:20%">Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>str</td>
-                <td>String</td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="description"><p>Decode.</p> 
-            <pre><code class="language-javascript">exports.decode = function (str) {
-
-  var p = {}, i = 0;
-
-  // look up type
-  p.type = packetslist[Number(str.charAt(0))];
-  if (null == p.type) return error;
-
-  // look up id
-  var next = str.charAt(i + 1);
-  if ('' != next &amp;&amp; Number(next) == next) {
-    p.id = '';
-    while (++i) {
-      var c = str.charAt(i);
-      if (null == c || Number(c) != c) {
-        --i;
-        break;
-      }
-      p.id += str.charAt(i);
-      if (i + 1 == str.length) break;
-    }
-  }
-
-  // look up json data
-  if (str.charAt(++i)) {
-    try {
-      p.data = JSON.parse(str.substr(i));
-    } catch(e){
-      return error;
-    }
-  }
-
-  debug('decoded %s as %j', str, p);
-  return p;
-};</code></pre>
+          <div class="description"> 
+            <pre><code class="language-javascript"></code></pre>
           </div>
         </div>
       </div>
