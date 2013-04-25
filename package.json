@@ -6,7 +6,6 @@
     "name": "Jonathan Brumley",
     "email": "cayasso@gmail.com"
   },
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git://github.com/cayasso/bid.io-client.git"
