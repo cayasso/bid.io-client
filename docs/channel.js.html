@@ -67,6 +67,16 @@
           </ul>
           <div class="scrollspy">
             <ul class="nav nav-list bs-docs-sidenav affix-top">
+              <li><a href="#debug"><i class="alert alert-info"></i>debug</a>
+              </li>
+              <li><a href="#names"><i class="alert alert-success"></i>names</a>
+              </li>
+              <li><a href="#enable"><i class="alert alert-info"></i>enable</a>
+              </li>
+              <li><a href="#disable"><i class="alert alert-info"></i>disable</a>
+              </li>
+              <li><a href="#enabled"><i class="alert alert-info"></i>enabled</a>
+              </li>
               <li><a href="#Emitter"><i class="alert alert-success"></i>Emitter</a>
               </li>
               <li><a href="#exports"><i class="alert alert-success"></i>exports</a>
@@ -101,10 +111,221 @@
               </li>
               <li><a href="#unwatch"><i class="alert alert-info"></i>unwatch</a>
               </li>
+              <li><a href="#EventEmitter"><i class="alert alert-success"></i>EventEmitter</a>
+              </li>
+              <li><a href="#EventEmitter"><i class="alert alert-info"></i>EventEmitter</a>
+              </li>
+              <li><a href="#on"><i class="alert alert-info"></i>on</a>
+              </li>
+              <li><a href="#once"><i class="alert alert-info"></i>once</a>
+              </li>
+              <li><a href="#removeListener"><i class="alert alert-info"></i>removeListener</a>
+              </li>
+              <li><a href="#removeAllListeners"><i class="alert alert-info"></i>removeAllListeners</a>
+              </li>
+              <li><a href="#listeners"><i class="alert alert-info"></i>listeners</a>
+              </li>
+              <li><a href="#emit"><i class="alert alert-info"></i>emit</a>
+              </li>
+              <li><a href="#isArray"><i class="alert alert-info"></i>isArray</a>
+              </li>
+              <li><a href="#Manager"><i class="alert alert-success"></i>Manager</a>
+              </li>
+              <li><a href="#exports"><i class="alert alert-success"></i>exports</a>
+              </li>
+              <li><a href="#factory"><i class="alert alert-info"></i>factory</a>
+              </li>
+              <li><a href="#protocol"><i class="alert alert-success"></i>protocol</a>
+              </li>
+              <li><a href="#Manager"><i class="alert alert-success"></i>Manager</a>
+              </li>
+              <li><a href="#Channel"><i class="alert alert-success"></i>Channel</a>
+              </li>
+              <li><a href="#exports"><i class="alert alert-success"></i>exports</a>
+              </li>
+              <li><a href="#Manager"><i class="alert alert-info"></i>Manager</a>
+              </li>
+              <li><a href="#connect"><i class="alert alert-info"></i>connect</a>
+              </li>
+              <li><a href="#join"><i class="alert alert-info"></i>join</a>
+              </li>
+              <li><a href="#leave"><i class="alert alert-info"></i>leave</a>
+              </li>
+              <li><a href="#getChannel"><i class="alert alert-info"></i>getChannel</a>
+              </li>
+              <li><a href="#debug"><i class="alert alert-success"></i>debug</a>
+              </li>
+              <li><a href="#protocol"><i class="alert alert-success"></i>protocol</a>
+              </li>
+              <li><a href="#packets"><i class="alert alert-success"></i>packets</a>
+              </li>
+              <li><a href="#packetslist"><i class="alert alert-success"></i>packetslist</a>
+              </li>
+              <li><a href="#error"><i class="alert alert-success"></i>error</a>
+              </li>
+              <li><a href="#encode"><i class="alert alert-info"></i>encode</a>
+              </li>
+              <li><a href="#decode"><i class="alert alert-info"></i>decode</a>
+              </li>
+              <li><a href="#parse"><i class="alert alert-success"></i>parse</a>
+              </li>
+              <li><a href="#re"><i class="alert alert-success"></i>re</a>
+              </li>
             </ul>
           </div>
         </div>
         <div class="span9">
+          <section id="debug">
+            <h1>debug</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>debug()</span> -><span>Type</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Create a debugger with the given <code>name</code>.</p> 
+            <pre><code class="language-javascript">function debug(name) {
+  if (!debug.enabled(name)) return function(){};
+
+  return function(fmt){
+    var curr = new Date;
+    var ms = curr - (debug[name] || curr);
+    debug[name] = curr;
+
+    fmt = name
+      + ' '
+      + fmt
+      + ' +' + debug.humanize(ms);
+
+    // This hackery is required for IE8
+    // where `console.log` doesn't have 'apply'
+    window.console
+      &amp;&amp; console.log
+      &amp;&amp; Function.prototype.apply.call(console.log, console, arguments);
+  }
+}</code></pre>
+          </div>
+          <section id="names">
+            <h1>names</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>debug.names</span>
+            </p>
+          </section>
+          <div class="description"><p>The currently active debug mode names.</p> 
+            <pre><code class="language-javascript">debug.names = [];
+debug.skips = [];</code></pre>
+          </div>
+          <section id="enable">
+            <h1>enable</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>debug.enable()</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Enables a debug mode by name. This can include modes<br />separated by a colon and wildcards.</p> 
+            <pre><code class="language-javascript">debug.enable = function(name) {
+  localStorage.debug = name;
+
+  var split = (name || '').split(/[\s,]+/)
+    , len = split.length;
+
+  for (var i = 0; i &lt; len; i++) {
+    name = split[i].replace('*', '.*?');
+    if (name[0] === '-') {
+      debug.skips.push(new RegExp('^' + name.substr(1) + '$'));
+    }
+    else {
+      debug.names.push(new RegExp('^' + name + '$'));
+    }
+  }
+};</code></pre>
+          </div>
+          <section id="disable">
+            <h1>disable</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>debug.disable()</span>
+            </p>
+          </section>
+          <div class="description"><p>Disable debug output.</p> 
+            <pre><code class="language-javascript">debug.disable = function(){
+  debug.enable('');
+};</code></pre>
+          </div>
+          <section id="enabled">
+            <h1>enabled</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>debug.enabled()</span> -><span>Boolean</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Returns true if the given mode name is enabled, false otherwise.</p> 
+            <pre><code class="language-javascript">debug.enabled = function(name) {
+  for (var i = 0, len = debug.skips.length; i &lt; len; i++) {
+    if (debug.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (var i = 0, len = debug.names.length; i &lt; len; i++) {
+    if (debug.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// persist
+
+if (window.localStorage) debug.enable(localStorage.debug);function require(p, parent){ var path = require.resolve(p) , mod = require.modules[path]; if (!mod) throw new Error('failed to require &quot;' + p + '&quot; from ' + parent); if (!mod.exports) { mod.exports = {}; mod.call(mod.exports, mod, mod.exports, require.relative(path), global); } return mod.exports;}require.modules = {};require.resolve = function(path){ var orig = path , reg = path + '.js' , index = path + '/index.js'; return require.modules[reg] &amp;&amp; reg || require.modules[index] &amp;&amp; index || orig;};require.register = function(path, fn){ require.modules[path] = fn;};require.relative = function(parent) { return function(p){ if ('debug' == p) return debug; if ('.' != p.charAt(0)) return require(p); var path = parent.split('/') , segs = p.split('/'); path.pop(); for (var i = 0; i &lt; segs.length; i++) { var seg = segs[i]; if ('..' == seg) path.pop(); else if ('.' != seg) path.push(seg); } return require(path.join('/'), parent); };};require.register(&quot;channel.js&quot;, function(module, exports, require, global){</code></pre>
+          </div>
           <section id="Emitter">
             <h1>Emitter</h1>
             <h5 class="subheader"></h5>
@@ -567,16 +788,11 @@ var packets = parser.packets;</code></pre>
           <div class="description"><p>Watch a <code>bid</code> or all <code>bids</code> in a <code>channel</code>.</p> 
             <pre><code class="language-javascript">Channel.prototype.watch = function (bidId, actions, fn) {
   if ('function' === typeof bidId) {
-    fn = bidId;
-    actions = '*';
-    bidId = null;
+    fn = bidId; actions = '*'; bidId = null;
   } else if (~this.actions.indexOf(bidId)) {
-    fn = actions;
-    actions = bidId;
-    bidId = null;
+    fn = actions; actions = bidId; bidId = null;
   } else if ('function' === typeof actions){
-    fn = actions;
-    actions = '*';
+    fn = actions; actions = '*';
   }
 
   var self = this;
@@ -587,27 +803,24 @@ var packets = parser.packets;</code></pre>
     actions = actions.toString();
     return ~actions.indexOf(action);
   };
-  self.watches[bidId] = function cb (packet) {
+
+  if (self.watches[bidId || this.name]) return this;
+
+  var cb = function (packet) {
     var result = decode(packet);
     var id = result.id;
     var type = result.type;
     var action = type;
     var isValid = valid(action);
-
-    if (bidId &amp;&amp; id == bidId &amp;&amp; isValid) {
-      return fn(result.data, action);
-    }
-    if (bidId &amp;&amp; id == bidId &amp;&amp; valid('*')) {
-      return fn(result.data, action);
-    }
-    if (bidId &amp;&amp; id != bidId) {
-      return;
-    }
-    if (!bidId &amp;&amp; isValid || valid('*')) {
-      return fn(result.data, action);
-    }
+    var isMine = bidId &amp;&amp; id == bidId;
+    var notMine = bidId &amp;&amp; id != bidId;
+    if (notMine) return;
+    if ((isMine &amp;&amp; isValid) ||
+      (isMine &amp;&amp; valid('*')) || (!bidId &amp;&amp; isValid ||
+        valid('*'))) return fn(result.data, action);
   };
-  self.socket.on(this.ns, self.watches[bidId]);
+  self.watches[bidId || this.name] = cb;
+  self.socket.on(this.ns, cb);
   return this;
 };</code></pre>
           </div>
@@ -636,7 +849,7 @@ var packets = parser.packets;</code></pre>
           </table>
           <div class="description"><p>Stop watching a <code>bid</code> or all <code>bids</code> from a <code>channel</code>.</p> 
             <pre><code class="language-javascript">Channel.prototype.unwatch = function (id) {
-  var watch = this.watches[id];
+  var watch = this.watches[id || this.name];
   if (watch) {
     this.socket.removeListener(this.ns, watch);
     delete this.watches[id];
@@ -644,6 +857,702 @@ var packets = parser.packets;</code></pre>
   }
   return this;
 };</code></pre>
+          </div>
+          <section id="EventEmitter">
+            <h1>EventEmitter</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>exports.EventEmitter</span>
+            </p>
+          </section>
+          <div class="description"><p>Expose constructor.</p> 
+            <pre><code class="language-javascript">exports.EventEmitter = EventEmitter;</code></pre>
+          </div>
+          <section id="EventEmitter">
+            <h1>EventEmitter</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>EventEmitter()</span>
+            </p>
+          </section>
+          <div class="description"><p>Event emitter constructor.</p> 
+            <pre><code class="language-javascript">function EventEmitter () {};</code></pre>
+          </div>
+          <section id="on">
+            <h1>on</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.on()</span>
+            </p>
+          </section>
+          <div class="description"><p>Adds a listener</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.on = function (name, fn) {
+  if (!this.$events) {
+    this.$events = {};
+  }
+
+  if (!this.$events[name]) {
+    this.$events[name] = fn;
+  } else if (isArray(this.$events[name])) {
+    this.$events[name].push(fn);
+  } else {
+    this.$events[name] = [this.$events[name], fn];
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.addListener = EventEmitter.prototype.on;</code></pre>
+          </div>
+          <section id="once">
+            <h1>once</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.once()</span>
+            </p>
+          </section>
+          <div class="description"><p>Adds a volatile listener.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.once = function (name, fn) {
+  var self = this;
+
+  function on () {
+    self.removeListener(name, on);
+    fn.apply(this, arguments);
+  }
+
+  on.listener = fn;
+  this.on(name, on);
+
+  return this;
+};</code></pre>
+          </div>
+          <section id="removeListener">
+            <h1>removeListener</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.removeListener()</span>
+            </p>
+          </section>
+          <div class="description"><p>Removes a listener.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.removeListener = function (name, fn) {
+  if (this.$events &amp;&amp; this.$events[name]) {
+    var list = this.$events[name];
+
+    if (isArray(list)) {
+      var pos = -1;
+
+      for (var i = 0, l = list.length; i &lt; l; i++) {
+        if (list[i] === fn || (list[i].listener &amp;&amp; list[i].listener === fn)) {
+          pos = i;
+          break;
+        }
+      }
+
+      if (pos &lt; 0) {
+        return this;
+      }
+
+      list.splice(pos, 1);
+
+      if (!list.length) {
+        delete this.$events[name];
+      }
+    } else if (list === fn || (list.listener &amp;&amp; list.listener === fn)) {
+      delete this.$events[name];
+    }
+  }
+
+  return this;
+};</code></pre>
+          </div>
+          <section id="removeAllListeners">
+            <h1>removeAllListeners</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.removeAllListeners()</span>
+            </p>
+          </section>
+          <div class="description"><p>Removes all listeners for an event.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.removeAllListeners = function (name) {
+  if (name === undefined) {
+    this.$events = {};
+    return this;
+  }
+
+  if (this.$events &amp;&amp; this.$events[name]) {
+    this.$events[name] = null;
+  }
+
+  return this;
+};</code></pre>
+          </div>
+          <section id="listeners">
+            <h1>listeners</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.listeners()</span>
+            </p>
+          </section>
+          <div class="description"><p>Gets all listeners for a certain event.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.listeners = function (name) {
+  if (!this.$events) {
+    this.$events = {};
+  }
+
+  if (!this.$events[name]) {
+    this.$events[name] = [];
+  }
+
+  if (!isArray(this.$events[name])) {
+    this.$events[name] = [this.$events[name]];
+  }
+
+  return this.$events[name];
+};</code></pre>
+          </div>
+          <section id="emit">
+            <h1>emit</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>EventEmitter.prototype.emit()</span>
+            </p>
+          </section>
+          <div class="description"><p>Emits an event.</p> 
+            <pre><code class="language-javascript">EventEmitter.prototype.emit = function (name) {
+  if (!this.$events) {
+    return false;
+  }
+
+  var handler = this.$events[name];
+
+  if (!handler) {
+    return false;
+  }
+
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  if ('function' == typeof handler) {
+    handler.apply(this, args);
+  } else if (isArray(handler)) {
+    var listeners = handler.slice();
+
+    for (var i = 0, l = listeners.length; i &lt; l; i++) {
+      listeners[i].apply(this, args);
+    }
+  } else {
+    return false;
+  }
+
+  return true;
+};</code></pre>
+          </div>
+          <section id="isArray">
+            <h1>isArray</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>isArray()</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>obj</td>
+                <td>Object</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Checks if the given object is an Array.</p>
+
+<pre><code>isArray([]); // true
+isArray({}); // false
+</code></pre> 
+            <pre><code class="language-javascript">function isArray (obj) {
+  return '[object Array]' === Object.prototype.toString.call(obj);
+}
+
+});require.register(&quot;index.js&quot;, function(module, exports, require, global){</code></pre>
+          </div>
+          <section id="Manager">
+            <h1>Manager</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>Manager</span>
+            </p>
+          </section>
+          <div class="description"><p>Module dependencies.</p> 
+            <pre><code class="language-javascript">var Manager = require('./manager');
+var Channel = require('./channel');
+var parser = require('./parser');</code></pre>
+          </div>
+          <section id="exports">
+            <h1>exports</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>module.exports</span>
+            </p>
+          </section>
+          <div class="description"><p>Module exports.</p> 
+            <pre><code class="language-javascript">module.exports = exports = factory;</code></pre>
+          </div>
+          <section id="factory">
+            <h1>factory</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>factory()</span>
+            </p>
+          </section>
+          <div class="description"><p>Looks up an existing <code>Manager</code> for multiplexing.</p>
+
+<h2>If the user summons</h2> 
+            <pre><code class="language-javascript">function factory(io, uri, opts) {
+  opts = opts || {};
+  if (!io.protocol || !io.connect ) {
+    throw Error('Please include socket.io client.');
+  }
+  return new Manager(io, uri, opts);
+}</code></pre>
+          </div>
+          <section id="protocol">
+            <h1>protocol</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>exports.protocol</span>
+            </p>
+          </section>
+          <div class="description"><p>Protocol version.</p> 
+            <pre><code class="language-javascript">exports.protocol = parser.protocol;</code></pre>
+          </div>
+          <section id="Manager">
+            <h1>Manager</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>exports.Manager</span>
+            </p>
+          </section>
+          <div class="description"><p>Expose constructors for standalone build.</p> 
+            <pre><code class="language-javascript">exports.Manager = Manager;
+exports.Channel = Channel;
+
+});require.register(&quot;manager.js&quot;, function(module, exports, require, global){</code></pre>
+          </div>
+          <section id="Channel">
+            <h1>Channel</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>Channel</span>
+            </p>
+          </section>
+          <div class="description"><p>Module dependencies.</p> 
+            <pre><code class="language-javascript">var Channel = require('./channel');
+var debug = require('debug')('bid.io-client:manager');
+var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
+          </div>
+          <section id="exports">
+            <h1>exports</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>module.exports</span>
+            </p>
+          </section>
+          <div class="description"><p>Module exports.</p> 
+            <pre><code class="language-javascript">module.exports = Manager;</code></pre>
+          </div>
+          <section id="Manager">
+            <h1>Manager</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">function</div><span>Manager()</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>io</td>
+                <td>Object</td>
+                <td>socket.io client object</td>
+              </tr>
+              <tr>
+                <td>url</td>
+                <td>String</td>
+                <td>the connection url</td>
+              </tr>
+              <tr>
+                <td>opts</td>
+                <td>Object</td>
+                <td>options</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Manager constructor.</p> 
+            <pre><code class="language-javascript">function Manager (io, url, opts) {
+  opts = opts || {};
+  this.url = url;
+  this.io = io;
+  this.opts = opts;
+  this.chnls = {};
+}</code></pre>
+          </div>
+          <section id="connect">
+            <h1>connect</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.connect()</span> -><span>Socket</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>url</td>
+                <td>String,Object</td>
+                <td>the connection `url` or `options`</td>
+              </tr>
+              <tr>
+                <td>opts</td>
+                <td>Object</td>
+                <td>`socket.io` connection options</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Connect with regular <code>socket.io</code>.</p> 
+            <pre><code class="language-javascript">Manager.prototype.connect = function (url, opts) {
+  if ('string' !== typeof url) {
+    opts = url;
+    url = null;
+  }
+  url = url || this.url;
+  return this.io.connect(url, opts);
+};</code></pre>
+          </div>
+          <section id="join">
+            <h1>join</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.join()</span> -><span>Manager</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td>the channel name</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback function</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Connect to a <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Manager.prototype.join = function (name, opts) {
+  opts = opts || {};
+  debug('joining channel %s', name);
+  var fnc = opts[FORCE_NEW_CONNECTION];
+  var chnl = this.chnls[name];
+  if (fnc) this.opts[FORCE_NEW_CONNECTION] = fnc;
+  if (chnl &amp;&amp; !fnc) return chnl;
+  chnl = new Channel(name, this);
+  this.chnls[name] = chnl;
+  return this.chnls[name];
+};</code></pre>
+          </div>
+          <section id="leave">
+            <h1>leave</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.leave()</span> -><span>Manager</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td>the channel name</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Disconnect to a <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Manager.prototype.leave = function (name) {
+  var chnl = this.chnls[name];
+  if (chnl) {
+    debug('disconnecting from channel %s', name);
+    chnl.disconnect();
+    delete this.chnls[name];
+  } else {
+    debug('unable to find channel %s', name);
+  }
+  return this;
+};</code></pre>
+          </div>
+          <section id="getChannel">
+            <h1>getChannel</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Manager.prototype.getChannel()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>name</td>
+                <td>String</td>
+                <td>the name of the `channel` to get</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Get a stored <code>channel</code> connection for use.</p> 
+            <pre><code class="language-javascript">Manager.prototype.getChannel = function (name) {
+  var chnl = this.chnls[name];
+  if (!chnl) return debug(&quot;Channel '%s' doesn't exist.&quot;, name);
+  return chnl;
+};
+
+});require.register(&quot;parser.js&quot;, function(module, exports, require, global){</code></pre>
+          </div>
+          <section id="debug">
+            <h1>debug</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>debug</span>
+            </p>
+          </section>
+          <div class="description"><p>Module dependencies.</p> 
+            <pre><code class="language-javascript">var debug = require('debug')('bid.io-parser');</code></pre>
+          </div>
+          <section id="protocol">
+            <h1>protocol</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>exports.protocol</span>
+            </p>
+          </section>
+          <div class="description"><p>Protocol version.</p> 
+            <pre><code class="language-javascript">exports.protocol = 1;</code></pre>
+          </div>
+          <section id="packets">
+            <h1>packets</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>packets</span>
+            </p>
+          </section>
+          <div class="description"><p>Packet types.</p> 
+            <pre><code class="language-javascript">var packets = exports.packets = {
+  fetch:        0,
+  query:        1,
+  lock:         2,
+  unlock:       3,
+  pending:      4,
+  complete:     5,
+  claim:        6,
+  forceunlock:  7,
+  error:        8
+};</code></pre>
+          </div>
+          <section id="packetslist">
+            <h1>packetslist</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>packetslist</span>
+            </p>
+          </section>
+          <div class="description"><p>Packet keys.</p> 
+            <pre><code class="language-javascript">var packetslist = exports.packetslist = keys(packets);</code></pre>
+          </div>
+          <section id="error">
+            <h1>error</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>error</span>
+            </p>
+          </section>
+          <div class="description"><p>Premade error packet.</p> 
+            <pre><code class="language-javascript">var error = { type: 'error', data: 'parser error' };</code></pre>
+          </div>
+          <section id="encode">
+            <h1>encode</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>exports.encode()</span> -><span>String</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>packet</td>
+                <td>Object</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Encode.</p> 
+            <pre><code class="language-javascript">exports.encode = function(obj){
+  var str = '';
+
+  // first is type
+  str += packets[obj.type];
+
+  // immediately followed by the bid id
+  if (null != obj.id) {
+    str += obj.id;
+  }
+
+  // json data
+  if (null != obj.data) {
+    str += JSON.stringify(obj.data);
+  }
+
+  debug('encoded %j as %s', obj, str);
+  return str;
+};</code></pre>
+          </div>
+          <section id="decode">
+            <h1>decode</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>exports.decode()</span> -><span>Object</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>str</td>
+                <td>String</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Decode.</p> 
+            <pre><code class="language-javascript">exports.decode = function (str) {
+
+  var p = {}, i = 0;
+
+  if (null == str) return error;
+
+  // look up type
+  p.type = packetslist[Number(str.charAt(0))];
+  if (null == p.type) return error;
+
+  // look up id
+  var next = str.charAt(i + 1);
+  if ('' != next &amp;&amp; Number(next) == next) {
+    p.id = '';
+    while (++i) {
+      var c = str.charAt(i);
+      if (null == c || Number(c) != c) {
+        --i;
+        break;
+      }
+      p.id += str.charAt(i);
+      if (i + 1 == str.length) break;
+    }
+  }
+
+  // look up json data
+  if (str.charAt(++i)) {
+    try {
+      p.data = JSON.parse(str.substr(i));
+    } catch(e){
+      return error;
+    }
+  }
+
+  debug('decoded %s as %j', str, p);
+  return p;
+};</code></pre>
+          </div>
+          <section id="parse">
+            <h1>parse</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">property</div><span>exports.parse</span>
+            </p>
+          </section>
+          <div class="description"><p>Module exports</p> 
+            <pre><code class="language-javascript">exports.parse = parse;</code></pre>
+          </div>
+          <section id="re">
+            <h1>re</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type">declaration</div><span>re</span>
+            </p>
+          </section>
+          <div class="description"><p>Parses an URI</p> 
+            <pre><code class="language-javascript">var re = /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/;
+var parts = ['source', 'protocol', 'authority', 'userInfo', 'user', 'password',
+             'host', 'port', 'relative', 'path', 'directory', 'file', 'query',
+             'anchor'];
+
+function parse (str) {
+  var m = re.exec(str || '') , uri = {} , i = 14;
+  while (i--) {
+    uri[parts[i]] = m[i] || '';
+  }
+ 
+  return uri;
+}
+});var exp = require('index.js');if (&quot;undefined&quot; != typeof module) module.exports = exp;else bio = exp;
+})();</code></pre>
           </div>
         </div>
       </div>

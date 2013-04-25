@@ -1,6 +1,6 @@
 {
   "name": "bid.io-client",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "bid.io client",
   "author": {
     "name": "Jonathan Brumley",
@@ -9,11 +9,11 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:18techs/bid.io-client.git"
+    "url": "git://github.com/cayasso/bid.io-client.git"
   },
   "dependencies": {    
     "socket.io-client": "0.9.11",
-    "bid.io-parser": "git+ssh://git@bitbucket.org:18techs/bid.io-parser.git",
+    "bid.io-parser": "0.1.x",
     "debug": "*"
   },
   "devDependencies": {
