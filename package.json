@@ -1,6 +1,6 @@
 {
   "name": "bid.io-client",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "bid.io client",
   "author": {
     "name": "Jonathan Brumley",
@@ -21,8 +21,5 @@
     "mocha": "*",
     "expect.js": "*",
     "browserbuild": "*"
-  },
-  "scripts": {
-    "test": "make test"
   }
 }
