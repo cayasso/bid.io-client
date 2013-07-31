@@ -162,7 +162,8 @@ function Channel (name, manager) {
     'unlock',
     'pending',
     'complete',
-    'error'
+    'error',
+    'update'
   ];
   this.events = [
     'message',
@@ -357,6 +358,20 @@ Channel.prototype.forceunlock = function (id, owner, fn) {
 };
 
 /**
+ * Update a `bid` data.
+ *
+ * @param {String|Number} id the bid id
+ * @param {Object} data data object
+ * @param {Function} fn callback
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.update = function (id, data, fn) {
+  return this.send('update', id, data, fn);
+};
+
+/**
  * Watch a `bid` or all `bids` in a `channel`.
  *
  * @param {String|Number} bidId the bid id or actions to watch
@@ -438,7 +453,15 @@ Channel.prototype.send = function (type, id, owner, fn) {
     fn = owner;
     owner = null;
   }
-  data = ('query' === type) ? { query: owner } : { owner: owner };
+
+  // handle query and update cases
+  data = ('query' === type) ?
+  { query: owner } :
+  (('update' === type) ?
+    { update: owner } :
+    { owner: owner });
+
+  // encode our data
   var packet = encode({ type: type, id: id, data: data });
   this.request(packet, fn);
   return this;
@@ -859,7 +882,8 @@ var packets = exports.packets = {
   complete:     5,
   claim:        6,
   forceunlock:  7,
-  error:        8
+  error:        8,
+  update:       9
 };
 
 /**

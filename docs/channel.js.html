@@ -97,6 +97,8 @@
               </li>
               <li><a href="#forceunlock"><i class="alert alert-info"></i>forceunlock</a>
               </li>
+              <li><a href="#update"><i class="alert alert-info"></i>update</a>
+              </li>
               <li><a href="#watch"><i class="alert alert-info"></i>watch</a>
               </li>
               <li><a href="#unwatch"><i class="alert alert-info"></i>unwatch</a>
@@ -529,6 +531,44 @@ var packets = parser.packets;</code></pre>
           <div class="description"><p>Force unlock a <code>bid</code>.</p> 
             <pre><code class="language-javascript">Channel.prototype.forceunlock = function (id, owner, fn) {
   return this.send('forceunlock', id, owner, fn);
+};</code></pre>
+          </div>
+          <section id="update">
+            <h1>update</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.update()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id</td>
+              </tr>
+              <tr>
+                <td>data</td>
+                <td>Object</td>
+                <td>data object</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Update a <code>bid</code> data.</p> 
+            <pre><code class="language-javascript">Channel.prototype.update = function (id, data, fn) {
+  return this.send('update', id, data, fn);
 };</code></pre>
           </div>
           <section id="watch">

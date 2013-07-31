@@ -1,6 +1,6 @@
 {
   "name": "bid.io-client",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "description": "bid.io client",
   "author": {
     "name": "Jonathan Brumley",
@@ -11,7 +11,7 @@
     "url": "git://github.com/cayasso/bid.io-client.git"
   },
   "dependencies": {    
-    "socket.io-client": "0.9.11",
+    "socket.io-client": "0.9.16",
     "bid.io-parser": "0.1.x",
     "debug": "*"
   },
