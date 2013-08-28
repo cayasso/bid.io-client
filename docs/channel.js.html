@@ -59,7 +59,7 @@
           <ul class="nav nav-list bs-docs-sidenav affix-top">
             <li class=""><a href="index.html">Main</a></li>
             <li class="active"><a href="channel.js.html">channel.js</a></li>
-            <li class=""><a href="events.js.html">events.js</a></li>
+            <li class=""><a href="eventemitter2.js.html">eventemitter2.js</a></li>
             <li class=""><a href="index.js.html">index.js</a></li>
             <li class=""><a href="manager.js.html">manager.js</a></li>
             <li class=""><a href="parser.js.html">parser.js</a></li>
@@ -115,13 +115,14 @@
             </p>
           </section>
           <div class="description"><p>Module dependencies.</p> 
-            <pre><code class="language-javascript">var Emitter = require('./events').EventEmitter;
+            <pre><code class="language-javascript">var Emitter = require('./eventemitter2').EventEmitter2;
 var debug = require('debug')('bid.io-client:channel');
 var parser = require('./parser');
 var url = require('./url');
 var encode = parser.encode;
 var decode = parser.decode;
-var packets = parser.packets;</code></pre>
+var packets = parser.packets;
+var slice = [].slice;</code></pre>
           </div>
           <section id="exports">
             <h1>exports</h1>
@@ -203,7 +204,7 @@ var packets = parser.packets;</code></pre>
             <pre><code class="language-javascript">Channel.prototype.bind = function (ev) {
   var self = this;
   this.evts[ev] = function () {
-    var args = Array.prototype.slice.call(arguments);
+    var args = slice.call(arguments);
     self.emit.apply(self, [ev].concat(args));
   };
   self.socket.on(ev, this.evts[ev]);
@@ -615,7 +616,7 @@ var packets = parser.packets;</code></pre>
   }
 
   var self = this;
-  var args = [].slice.apply(arguments);
+  var args = slice.call(arguments);
 
   // validate action
   var valid = function (action) {
