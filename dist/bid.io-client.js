@@ -261,7 +261,7 @@ Channel.prototype.onstream = function (packet) {
  *
  * @param {String} ev event name
  * @return {Channel} self
- * @api public
+ * @api private
  */
 
 Channel.prototype.bind = function (ev) {
@@ -279,7 +279,7 @@ Channel.prototype.bind = function (ev) {
  *
  * @param {String} ev event name
  * @return {Channel} self
- * @api public
+ * @api private
  */
 
 Channel.prototype.unbind = function (ev) {
@@ -339,7 +339,7 @@ Channel.prototype.unwatch = function (id, action, fn) {
  * @param {String} type the method type to execute, could be `off` or `on`
  * @param {Function} fn the callback function
  * @return {Channel} self
- * @api public
+ * @api private
  */
 
 Channel.prototype._watch = function (id, action, type, fn) {
@@ -360,6 +360,8 @@ Channel.prototype._watch = function (id, action, type, fn) {
   // Lets create the event string
   event = this.ns + DELIMITER + id + DELIMITER;
 
+  // if no callback is passed and its unwatch
+  // envent then remove all the listeners
   if ('off' === type && !fn) {
     type = 'removeAllListeners';
   }
@@ -370,7 +372,6 @@ Channel.prototype._watch = function (id, action, type, fn) {
     if (isArray(action)) {
       actions = action;
     } else {
-
       // if it is a string then convert it to an array
       if ('string' === typeof action && WILDCARD !== action) {
         actions = action.split(' ');
@@ -384,16 +385,9 @@ Channel.prototype._watch = function (id, action, type, fn) {
     for (var i = 0; i < l; i++) {
       action = actions[i];
       if (!ACTIONS_RE.test(action)) continue;
-
-      if (this.name === '160')
-        console.log(type, event + action, fn);
-
       this[type](event + action, fn);
     }
   } else {
-    if (this.name === '160')
-      console.log(type, event + WILDCARD, fn);
-
     // register a wildcard event
     this[type](event + WILDCARD, fn);
   }
@@ -592,13 +586,13 @@ Channel.prototype.response = function (fn) {
  * Build a `channel` url.
  *
  * @param {String} channel the channel name
- * @param {String} urlStr the provided url
+ * @param {String} str the provided url string
  * @return {String} url the chanel url
  * @api private
  */
 
-Channel.prototype.buildUrl = function (channel, urlStr) {
-  var obj = url.parse(urlStr || this.url);
+Channel.prototype.buildUrl = function (channel, str) {
+  var obj = url.parse(str || this.url);
   return [obj.protocol, '://', obj.authority, obj.path, '/', channel, '?', obj.query].join('');
 };
 });require.register("eventemitter2.js", function(module, exports, require, global){
@@ -1476,7 +1470,6 @@ function parse (str) {
   while (i--) {
     uri[parts[i]] = m[i] || '';
   }
- 
   return uri;
 }
 });var exp = require('index.js');if ("undefined" != typeof module) module.exports = exp;else bio = exp;
