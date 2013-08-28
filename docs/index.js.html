@@ -71,7 +71,7 @@
               </li>
               <li><a href="#exports"><i class="alert alert-success"></i>exports</a>
               </li>
-              <li><a href="#factory"><i class="alert alert-info"></i>factory</a>
+              <li><a href="#Factory"><i class="alert alert-info"></i>Factory</a>
               </li>
               <li><a href="#protocol"><i class="alert alert-success"></i>protocol</a>
               </li>
@@ -101,19 +101,19 @@ var parser = require('./parser');</code></pre>
             </p>
           </section>
           <div class="description"><p>Module exports.</p> 
-            <pre><code class="language-javascript">module.exports = exports = factory;</code></pre>
+            <pre><code class="language-javascript">module.exports = exports = Factory;</code></pre>
           </div>
-          <section id="factory">
-            <h1>factory</h1>
+          <section id="Factory">
+            <h1>Factory</h1>
             <h5 class="subheader"></h5>
             <p>
-              <div class="label label-info radius ctx-type">function</div><span>factory()</span>
+              <div class="label label-info radius ctx-type">function</div><span>Factory()</span>
             </p>
           </section>
           <div class="description"><p>Looks up an existing <code>Manager</code> for multiplexing.</p>
 
 <h2>If the user summons</h2> 
-            <pre><code class="language-javascript">function factory(io, uri, opts) {
+            <pre><code class="language-javascript">function Factory(io, uri, opts) {
   opts = opts || {};
   if (!io.protocol || !io.connect ) {
     throw Error('Please include socket.io client.');

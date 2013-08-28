@@ -75,11 +75,17 @@
               </li>
               <li><a href="#connect"><i class="alert alert-info"></i>connect</a>
               </li>
-              <li><a href="#disconnect"><i class="alert alert-info"></i>disconnect</a>
-              </li>
               <li><a href="#bind"><i class="alert alert-info"></i>bind</a>
               </li>
               <li><a href="#unbind"><i class="alert alert-info"></i>unbind</a>
+              </li>
+              <li><a href="#disconnect"><i class="alert alert-info"></i>disconnect</a>
+              </li>
+              <li><a href="#watch"><i class="alert alert-info"></i>watch</a>
+              </li>
+              <li><a href="#unwatch"><i class="alert alert-info"></i>unwatch</a>
+              </li>
+              <li><a href="#_watch"><i class="alert alert-info"></i>_watch</a>
               </li>
               <li><a href="#fetch"><i class="alert alert-info"></i>fetch</a>
               </li>
@@ -98,10 +104,6 @@
               <li><a href="#forceunlock"><i class="alert alert-info"></i>forceunlock</a>
               </li>
               <li><a href="#update"><i class="alert alert-info"></i>update</a>
-              </li>
-              <li><a href="#watch"><i class="alert alert-info"></i>watch</a>
-              </li>
-              <li><a href="#unwatch"><i class="alert alert-info"></i>unwatch</a>
               </li>
             </ul>
           </div>
@@ -122,7 +124,53 @@ var url = require('./url');
 var encode = parser.encode;
 var decode = parser.decode;
 var packets = parser.packets;
-var slice = [].slice;</code></pre>
+var slice = [].slice;
+var actions;
+var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
+  return Object.prototype.toString.call(obj) === &quot;[object Array]&quot;;
+};</code></pre>
+          </div>
+          <section>
+            <h1></h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-success radius ctx-type"></div>
+            </p>
+          </section>
+          <div class="description"><p>Constants declarations.</p> 
+            <pre><code class="language-javascript">// Event delimiter
+var DELIMITER = '::';
+
+// Event wildcard
+var WILDCARD = '*';
+
+// Events black list
+var EVENTS = [
+  'message',
+  'close',
+  'connect',
+  'connecting',
+  'connect_failed',
+  'reconnect',
+  'reconnecting',
+  'reconnect_failed',
+  'disconnect'
+];
+
+// Actions white list
+var ACTIONS = [
+  'fetch',
+  'query',
+  'lock',
+  'unlock',
+  'pending',
+  'complete',
+  'error',
+  'update'
+];
+
+// Actions regular expression
+var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
           </div>
           <section id="exports">
             <h1>exports</h1>
@@ -153,27 +201,20 @@ var slice = [].slice;</code></pre>
           </section>
           <div class="description"><p>Get a <code>socket</code> instance and connect to it.</p> 
             <pre><code class="language-javascript">Channel.prototype.connect = function () {
+  var channel = this;
   var url = this.buildUrl(this.name);
+  var l = EVENTS.length;
+
   this.socket = this.io.connect(url, this.opts);
-  for (var i = 0, e; e = this.events[i]; i++) {
-    this.bind(e);
+
+  for (var i = 0; i &lt; l; i++) {
+    this.bind(EVENTS[i]);
   }
-  return this;
-};</code></pre>
-          </div>
-          <section id="disconnect">
-            <h1>disconnect</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.disconnect()</span> -><span>Channel</span>
-            </p>
-          </section>
-          <div class="description"><p>Disconnect from <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.disconnect = function () {
-  for (var i = 0, e; e = this.events[i]; i++) {
-    this.unbind(e);
-    this.socket.disconnect();
-  }
+
+  this.socket.on(this.ns, function (packet) {
+    channel.onstream.call(channel, packet);
+  });
+
   return this;
 };</code></pre>
           </div>
@@ -237,6 +278,197 @@ var slice = [].slice;</code></pre>
           <div class="description"><p>Bind socket events to channel.</p> 
             <pre><code class="language-javascript">Channel.prototype.unbind = function (ev) {
   this.socket.removeListener(ev, this.evts[ev]);
+  return this;
+};</code></pre>
+          </div>
+          <section id="disconnect">
+            <h1>disconnect</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.disconnect()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <div class="description"><p>Disconnect from <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.disconnect = function () {
+  var l = EVENTS.length;
+  for (var i = 0; i &lt; l; i++) {
+    this.unbind(EVENTS[i]);
+    this.socket.disconnect();
+  }
+  return this;
+};</code></pre>
+          </div>
+          <section id="watch">
+            <h1>watch</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.watch()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id or actions to watch</td>
+              </tr>
+              <tr>
+                <td>actions</td>
+                <td>String</td>
+                <td>the the actions to watch</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>callback</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Watch a <code>bid</code> or all <code>bids</code> in a <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.watch = function (id, action, fn) {
+  return this._watch(id, action, 'on', fn);
+};</code></pre>
+          </div>
+          <section id="unwatch">
+            <h1>unwatch</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.unwatch()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id to unwatch</td>
+              </tr>
+              <tr>
+                <td>action</td>
+                <td>String,Array</td>
+                <td>the action(s) to unwatch</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>the callback function</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>Stop watching a <code>bid</code> or all <code>bids</code> from a <code>channel</code>.</p> 
+            <pre><code class="language-javascript">Channel.prototype.unwatch = function (id, action, fn) {
+  return this._watch(id, action, 'off', fn);
+};</code></pre>
+          </div>
+          <section id="_watch">
+            <h1>_watch</h1>
+            <h5 class="subheader"></h5>
+            <p>
+              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype._watch()</span> -><span>Channel</span>
+            </p>
+          </section>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th style="width:20%">Option name</th>
+                <th style="width:20%">Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>id</td>
+                <td>String,Number</td>
+                <td>the bid id to unwatch</td>
+              </tr>
+              <tr>
+                <td>action</td>
+                <td>String,Array</td>
+                <td>the action(s) to watch or unwatch</td>
+              </tr>
+              <tr>
+                <td>type</td>
+                <td>String</td>
+                <td>the method type to execute, could be `off` or `on`</td>
+              </tr>
+              <tr>
+                <td>fn</td>
+                <td>Function</td>
+                <td>the callback function</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="description"><p>This is the actuall watch unwatch event.</p> 
+            <pre><code class="language-javascript">Channel.prototype._watch = function (id, action, type, fn) {
+
+  var event;
+  var actions;
+
+  if ('function' === typeof id) {
+    fn = id; action = WILDCARD; id = WILDCARD;
+  } else if (isArray(id) || ACTIONS_RE.test(id) || ~(id + '').indexOf(' ')) {
+    fn = action; action = id; id = WILDCARD;
+  } else if ('function' === typeof action){
+    fn = action; action = WILDCARD;
+  } else if (!id){
+    id = WILDCARD;
+  }
+
+  // Lets create the event string
+  event = this.ns + DELIMITER + id + DELIMITER;
+
+  if ('off' === type &amp;&amp; !fn) {
+    type = 'removeAllListeners';
+  }
+
+  // if action is valid then check to see if its
+  // an array.
+  if (action) {
+    if (isArray(action)) {
+      actions = action;
+    } else {
+
+      // if it is a string then convert it to an array
+      if ('string' === typeof action &amp;&amp; WILDCARD !== action) {
+        actions = action.split(' ');
+      }
+    }
+  }
+
+  if (actions) {
+    var l = actions.length;
+    // add register each event by action
+    for (var i = 0; i &lt; l; i++) {
+      action = actions[i];
+      if (!ACTIONS_RE.test(action)) continue;
+
+      if (this.name === '160')
+        console.log(type, event + action, fn);
+
+      this[type](event + action, fn);
+    }
+  } else {
+    if (this.name === '160')
+      console.log(type, event + WILDCARD, fn);
+
+    // register a wildcard event
+    this[type](event + WILDCARD, fn);
+  }
+
   return this;
 };</code></pre>
           </div>
@@ -570,112 +802,6 @@ var slice = [].slice;</code></pre>
           <div class="description"><p>Update a <code>bid</code> data.</p> 
             <pre><code class="language-javascript">Channel.prototype.update = function (id, data, fn) {
   return this.send('update', id, data, fn);
-};</code></pre>
-          </div>
-          <section id="watch">
-            <h1>watch</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.watch()</span> -><span>Channel</span>
-            </p>
-          </section>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:20%">Option name</th>
-                <th style="width:20%">Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>bidId</td>
-                <td>String,Number</td>
-                <td>the bid id or actions to watch</td>
-              </tr>
-              <tr>
-                <td>actions</td>
-                <td>String</td>
-                <td>the the actions to watch</td>
-              </tr>
-              <tr>
-                <td>fn</td>
-                <td>Function</td>
-                <td>callback</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="description"><p>Watch a <code>bid</code> or all <code>bids</code> in a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.watch = function (bidId, actions, fn) {
-  if ('function' === typeof bidId) {
-    fn = bidId; actions = '*'; bidId = null;
-  } else if (~this.actions.indexOf(bidId)) {
-    fn = actions; actions = bidId; bidId = null;
-  } else if ('function' === typeof actions){
-    fn = actions; actions = '*';
-  }
-
-  var self = this;
-  var args = slice.call(arguments);
-
-  // validate action
-  var valid = function (action) {
-    actions = actions.toString();
-    return ~actions.indexOf(action);
-  };
-
-  if (self.watches[bidId || this.name]) return this;
-
-  var cb = function (packet) {
-    var result = decode(packet);
-    var id = result.id;
-    var type = result.type;
-    var action = type;
-    var isValid = valid(action);
-    var isMine = bidId &amp;&amp; id == bidId;
-    var notMine = bidId &amp;&amp; id != bidId;
-    if (notMine) return;
-    if ((isMine &amp;&amp; isValid) ||
-      (isMine &amp;&amp; valid('*')) || (!bidId &amp;&amp; isValid ||
-        valid('*'))) return fn(result.data, action);
-  };
-  self.watches[bidId || this.name] = cb;
-  self.socket.on(this.ns, cb);
-  return this;
-};</code></pre>
-          </div>
-          <section id="unwatch">
-            <h1>unwatch</h1>
-            <h5 class="subheader"></h5>
-            <p>
-              <div class="label label-info radius ctx-type">method</div><span>Channel.prototype.unwatch()</span> -><span>Channel</span>
-            </p>
-          </section>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th style="width:20%">Option name</th>
-                <th style="width:20%">Type</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>id</td>
-                <td>String,Number</td>
-                <td>the bid id to unwatch</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="description"><p>Stop watching a <code>bid</code> or all <code>bids</code> from a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.unwatch = function (id) {
-  var watch = this.watches[id || this.name];
-  if (watch) {
-    this.socket.removeListener(this.ns, watch);
-    delete this.watches[id];
-    console.log('unwatching bid: ', id, 'actions: ', actions);
-  }
-  return this;
 };</code></pre>
           </div>
         </div>

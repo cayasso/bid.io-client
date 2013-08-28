@@ -132,6 +132,48 @@ var encode = parser.encode;
 var decode = parser.decode;
 var packets = parser.packets;
 var slice = [].slice;
+var actions;
+var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
+  return Object.prototype.toString.call(obj) === "[object Array]";
+};
+
+/**
+ * Constants declarations.
+ */
+
+// Event delimiter
+var DELIMITER = '::';
+
+// Event wildcard
+var WILDCARD = '*';
+
+// Events black list
+var EVENTS = [
+  'message',
+  'close',
+  'connect',
+  'connecting',
+  'connect_failed',
+  'reconnect',
+  'reconnecting',
+  'reconnect_failed',
+  'disconnect'
+];
+
+// Actions white list
+var ACTIONS = [
+  'fetch',
+  'query',
+  'lock',
+  'unlock',
+  'pending',
+  'complete',
+  'error',
+  'update'
+];
+
+// Actions regular expression
+var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');
 
 /**
  * Module exports.
@@ -149,6 +191,12 @@ module.exports = Channel;
  */
 
 function Channel (name, manager) {
+
+  Emitter.call(this, {
+    delimiter: DELIMITER,
+    wildcard: true
+  });
+
   this.io = manager.io;
   this.opts = manager.opts;
   this.url = manager.url;
@@ -156,27 +204,6 @@ function Channel (name, manager) {
   this.name = name;
   this.watches = {};
   this.evts = {};
-  this.actions = [
-    'fetch',
-    'query',
-    'lock',
-    'unlock',
-    'pending',
-    'complete',
-    'error',
-    'update'
-  ];
-  this.events = [
-    'message',
-    'close',
-    'connect',
-    'connecting',
-    'connect_failed',
-    'reconnect',
-    'reconnecting',
-    'reconnect_failed',
-    'disconnect'
-  ];
   this.connect();
 }
 
@@ -194,26 +221,38 @@ Channel.prototype.__proto__ = Emitter.prototype;
  */
 
 Channel.prototype.connect = function () {
+  var channel = this;
   var url = this.buildUrl(this.name);
+  var l = EVENTS.length;
+
   this.socket = this.io.connect(url, this.opts);
-  for (var i = 0, e; e = this.events[i]; i++) {
-    this.bind(e);
+
+  for (var i = 0; i < l; i++) {
+    this.bind(EVENTS[i]);
   }
+
+  this.socket.on(this.ns, function (packet) {
+    channel.onstream.call(channel, packet);
+  });
+
   return this;
 };
 
 /**
- * Disconnect from `channel`.
+ * Called up on incoming stream message.
  *
+ * @param {Object} packet
  * @return {Channel} self
- * @api public
+ * @api private
  */
 
-Channel.prototype.disconnect = function () {
-  for (var i = 0, e; e = this.events[i]; i++) {
-    this.unbind(e);
-    this.socket.disconnect();
-  }
+Channel.prototype.onstream = function (packet) {
+  var raw = decode(packet);
+  var id = raw.id;
+  var action = raw.type;
+  var data = raw.data;
+  var event = this.ns + DELIMITER + (id || WILDCARD) + DELIMITER + action;
+  this.emit(event, data, action);
   return this;
 };
 
@@ -245,6 +284,120 @@ Channel.prototype.bind = function (ev) {
 
 Channel.prototype.unbind = function (ev) {
   this.socket.removeListener(ev, this.evts[ev]);
+  return this;
+};
+
+/**
+ * Disconnect from `channel`.
+ *
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.disconnect = function () {
+  var l = EVENTS.length;
+  for (var i = 0; i < l; i++) {
+    this.unbind(EVENTS[i]);
+    this.socket.disconnect();
+  }
+  return this;
+};
+
+/**
+ * Watch a `bid` or all `bids` in a `channel`.
+ *
+ * @param {String|Number} id the bid id or actions to watch
+ * @param {String} actions the the actions to watch
+ * @param {Function} fn callback
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.watch = function (id, action, fn) {
+  return this._watch(id, action, 'on', fn);
+};
+
+/**
+ * Stop watching a `bid` or all `bids` from a `channel`.
+ *
+ * @param {String|Number} id the bid id to unwatch
+ * @param {String|Array} action the action(s) to unwatch
+ * @param {Function} fn the callback function
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype.unwatch = function (id, action, fn) {
+  return this._watch(id, action, 'off', fn);
+};
+
+/**
+ * This is the actuall watch unwatch event.
+ * 
+ * @param {String|Number} id the bid id to unwatch
+ * @param {String|Array} action the action(s) to watch or unwatch
+ * @param {String} type the method type to execute, could be `off` or `on`
+ * @param {Function} fn the callback function
+ * @return {Channel} self
+ * @api public
+ */
+
+Channel.prototype._watch = function (id, action, type, fn) {
+
+  var event;
+  var actions;
+
+  if ('function' === typeof id) {
+    fn = id; action = WILDCARD; id = WILDCARD;
+  } else if (isArray(id) || ACTIONS_RE.test(id) || ~(id + '').indexOf(' ')) {
+    fn = action; action = id; id = WILDCARD;
+  } else if ('function' === typeof action){
+    fn = action; action = WILDCARD;
+  } else if (!id){
+    id = WILDCARD;
+  }
+
+  // Lets create the event string
+  event = this.ns + DELIMITER + id + DELIMITER;
+
+  if ('off' === type && !fn) {
+    type = 'removeAllListeners';
+  }
+
+  // if action is valid then check to see if its
+  // an array.
+  if (action) {
+    if (isArray(action)) {
+      actions = action;
+    } else {
+
+      // if it is a string then convert it to an array
+      if ('string' === typeof action && WILDCARD !== action) {
+        actions = action.split(' ');
+      }
+    }
+  }
+
+  if (actions) {
+    var l = actions.length;
+    // add register each event by action
+    for (var i = 0; i < l; i++) {
+      action = actions[i];
+      if (!ACTIONS_RE.test(action)) continue;
+
+      if (this.name === '160')
+        console.log(type, event + action, fn);
+
+      this[type](event + action, fn);
+    }
+  } else {
+    if (this.name === '160')
+      console.log(type, event + WILDCARD, fn);
+
+    // register a wildcard event
+    this[type](event + WILDCARD, fn);
+  }
+
   return this;
 };
 
@@ -370,72 +523,6 @@ Channel.prototype.forceunlock = function (id, owner, fn) {
 
 Channel.prototype.update = function (id, data, fn) {
   return this.send('update', id, data, fn);
-};
-
-/**
- * Watch a `bid` or all `bids` in a `channel`.
- *
- * @param {String|Number} bidId the bid id or actions to watch
- * @param {String} actions the the actions to watch
- * @param {Function} fn callback
- * @return {Channel} self
- * @api public
- */
-
-Channel.prototype.watch = function (bidId, actions, fn) {
-  if ('function' === typeof bidId) {
-    fn = bidId; actions = '*'; bidId = null;
-  } else if (~this.actions.indexOf(bidId)) {
-    fn = actions; actions = bidId; bidId = null;
-  } else if ('function' === typeof actions){
-    fn = actions; actions = '*';
-  }
-
-  var self = this;
-  var args = slice.call(arguments);
-
-  // validate action
-  var valid = function (action) {
-    actions = actions.toString();
-    return ~actions.indexOf(action);
-  };
-
-  if (self.watches[bidId || this.name]) return this;
-
-  var cb = function (packet) {
-    var result = decode(packet);
-    var id = result.id;
-    var type = result.type;
-    var action = type;
-    var isValid = valid(action);
-    var isMine = bidId && id == bidId;
-    var notMine = bidId && id != bidId;
-    if (notMine) return;
-    if ((isMine && isValid) ||
-      (isMine && valid('*')) || (!bidId && isValid ||
-        valid('*'))) return fn(result.data, action);
-  };
-  self.watches[bidId || this.name] = cb;
-  self.socket.on(this.ns, cb);
-  return this;
-};
-
-/**
- * Stop watching a `bid` or all `bids` from a `channel`.
- *
- * @param {String|Number} id the bid id to unwatch
- * @return {Channel} self
- * @api public
- */
-
-Channel.prototype.unwatch = function (id) {
-  var watch = this.watches[id || this.name];
-  if (watch) {
-    this.socket.removeListener(this.ns, watch);
-    delete this.watches[id];
-    console.log('unwatching bid: ', id, 'actions: ', actions);
-  }
-  return this;
 };
 
 /**
@@ -1085,7 +1172,7 @@ var parser = require('./parser');
  * Module exports.
  */
 
-module.exports = exports = factory;
+module.exports = exports = Factory;
 
 /**
  * Looks up an existing `Manager` for multiplexing.
@@ -1094,7 +1181,7 @@ module.exports = exports = factory;
  * @api public
  */
 
-function factory(io, uri, opts) {
+function Factory(io, uri, opts) {
   opts = opts || {};
   if (!io.protocol || !io.connect ) {
     throw Error('Please include socket.io client.');
