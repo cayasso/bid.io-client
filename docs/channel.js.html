@@ -111,18 +111,18 @@
             </p>
           </section>
           <div class="description"><p>Module dependencies.</p> 
-            <pre><code class="language-javascript">var Emitter = require('./eventemitter2').EventEmitter2;
-var debug = require('debug')('bid.io-client:channel');
-var parser = require('./parser');
-var url = require('./url');
-var encode = parser.encode;
-var decode = parser.decode;
-var packets = parser.packets;
-var slice = [].slice;
-var actions;
-var isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
-  return Object.prototype.toString.call(obj) === &quot;[object Array]&quot;;
-};</code></pre>
+            <pre><code class="language-javascript">var Emitter = require('./eventemitter2').EventEmitter2
+  , debug = require('debug')('bid.io-client:channel')
+  , parser = require('./parser')
+  , url = require('./url')
+  , encode = parser.encode
+  , decode = parser.decode
+  , packets = parser.packets
+  , slice = [].slice
+  , actions
+  , isArray = Array.isArray ? Array.isArray : function _isArray(obj) {
+      return Object.prototype.toString.call(obj) === &quot;[object Array]&quot;;
+    };</code></pre>
           </div>
           <section>
             <h1></h1>
@@ -194,7 +194,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </p>
           </section>
           <div class="description"><p>Get a <code>socket</code> instance and connect to it.</p> 
-            <pre><code class="language-javascript">Channel.prototype.connect = function () {
+            <pre><code class="language-javascript">Channel.prototype.connect = function connect() {
   var channel = this;
   var url = this.buildUrl(this.name);
   var l = EVENTS.length;
@@ -205,8 +205,12 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
     this.bind(EVENTS[i]);
   }
 
-  this.socket.on(this.ns, function (packet) {
+  this.socket.on(this.ns, function onev(packet) {
     channel.onstream.call(channel, packet);
+  });
+
+  this.socket.on('reload', function onreload() {
+    channel.onreload.call(channel);
   });
 
   return this;
@@ -220,7 +224,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </p>
           </section>
           <div class="description"><p>Disconnect from <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.disconnect = function () {
+            <pre><code class="language-javascript">Channel.prototype.disconnect = function disconnect() {
   var l = EVENTS.length;
   for (var i = 0; i &lt; l; i++) {
     this.unbind(EVENTS[i]);
@@ -263,7 +267,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Watch a <code>bid</code> or all <code>bids</code> in a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.watch = function (id, action, fn) {
+            <pre><code class="language-javascript">Channel.prototype.watch = function watch(id, action, fn) {
   return this._watch(id, action, 'on', fn);
 };</code></pre>
           </div>
@@ -301,7 +305,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Stop watching a <code>bid</code> or all <code>bids</code> from a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.unwatch = function (id, action, fn) {
+            <pre><code class="language-javascript">Channel.prototype.unwatch = function unwatch(id, action, fn) {
   return this._watch(id, action, 'off', fn);
 };</code></pre>
           </div>
@@ -334,7 +338,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Fetch a <code>bid</code> from server.</p> 
-            <pre><code class="language-javascript">Channel.prototype.fetch = function (id, fn) {
+            <pre><code class="language-javascript">Channel.prototype.fetch = function fetch(id, fn) {
   return this.send('fetch', id, fn);
 };</code></pre>
           </div>
@@ -367,7 +371,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Fetch a <code>bid</code> or <code>bids</code> from server.</p> 
-            <pre><code class="language-javascript">Channel.prototype.find = function (query, fn) {
+            <pre><code class="language-javascript">Channel.prototype.find = function find(query, fn) {
   return this.send('query', '', query, fn);
 };</code></pre>
           </div>
@@ -405,7 +409,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Lock a <code>bid</code> by opening it.</p> 
-            <pre><code class="language-javascript">Channel.prototype.open = function (id, owner, fn) {
+            <pre><code class="language-javascript">Channel.prototype.open = function open(id, owner, fn) {
   return this.send('lock', id, owner, fn);
 };</code></pre>
           </div>
@@ -443,7 +447,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Cancel a <code>bid</code> by unlocking it.</p> 
-            <pre><code class="language-javascript">Channel.prototype.cancel = function (id, owner, fn) {
+            <pre><code class="language-javascript">Channel.prototype.cancel = function cancel(id, owner, fn) {
   return this.send('unlock', id, owner, fn);
 };</code></pre>
           </div>
@@ -481,7 +485,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Claim a <code>bid</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.claim = function (id, owner, fn) {
+            <pre><code class="language-javascript">Channel.prototype.claim = function claim(id, owner, fn) {
   return this.send('claim', id, owner, fn);
 };</code></pre>
           </div>
@@ -519,7 +523,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Set <code>bid</code> to pending.</p> 
-            <pre><code class="language-javascript">Channel.prototype.pending = function (id, owner, fn) {
+            <pre><code class="language-javascript">Channel.prototype.pending = function pending(id, owner, fn) {
   return this.send('pending', id, owner, fn);
 };</code></pre>
           </div>
@@ -557,7 +561,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Complete (close) a <code>bid</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.complete = function (id, owner, fn) {
+            <pre><code class="language-javascript">Channel.prototype.complete = function comple(id, owner, fn) {
   return this.send('complete', id, owner, fn);
 };</code></pre>
           </div>
@@ -595,7 +599,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Force unlock a <code>bid</code>.</p> 
-            <pre><code class="language-javascript">Channel.prototype.forceunlock = function (id, owner, fn) {
+            <pre><code class="language-javascript">Channel.prototype.forceunlock = function forceunlock(id, owner, fn) {
   return this.send('forceunlock', id, owner, fn);
 };</code></pre>
           </div>
@@ -633,7 +637,7 @@ var ACTIONS_RE = new RegExp('^(' + ACTIONS.join('|') + ')$');</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Update a <code>bid</code> data.</p> 
-            <pre><code class="language-javascript">Channel.prototype.update = function (id, data, fn) {
+            <pre><code class="language-javascript">Channel.prototype.update = function update(id, data, fn) {
   return this.send('update', id, data, fn);
 };</code></pre>
           </div>

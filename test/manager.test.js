@@ -5,7 +5,7 @@
 var Manager = require('./../lib/manager');
 var Channel = require('./../lib/channel');
 var expect = require('expect.js');
-var Emitter = require('./../lib/events').EventEmitter;
+var Emitter = require('./../lib/eventemitter2').EventEmitter2;
 
 // Mock socket.io
 var io = {

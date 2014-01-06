@@ -93,9 +93,9 @@
             </p>
           </section>
           <div class="description"><p>Module dependencies.</p> 
-            <pre><code class="language-javascript">var Channel = require('./channel');
-var debug = require('debug')('bid.io-client:manager');
-var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
+            <pre><code class="language-javascript">var Channel = require('./channel')
+  , debug = require('debug')('bid.io-client:manager')
+  , FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
           </div>
           <section id="exports">
             <h1>exports</h1>
@@ -141,12 +141,13 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Manager constructor.</p> 
-            <pre><code class="language-javascript">function Manager (io, url, opts) {
+            <pre><code class="language-javascript">function Manager(io, url, opts) {
   opts = opts || {};
   this.url = url;
   this.io = io;
   this.opts = opts;
   this.chnls = {};
+  this.conn = null;
 }</code></pre>
           </div>
           <section id="connect">
@@ -178,13 +179,14 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Connect with regular <code>socket.io</code>.</p> 
-            <pre><code class="language-javascript">Manager.prototype.connect = function (url, opts) {
+            <pre><code class="language-javascript">Manager.prototype.connect = function connect(url, opts) {
   if ('string' !== typeof url) {
     opts = url;
     url = null;
   }
   url = url || this.url;
-  return this.io.connect(url, opts);
+  this.conn = this.io.connect(url, opts);
+  return this.conn;
 };</code></pre>
           </div>
           <section id="join">
@@ -216,7 +218,7 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Connect to a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Manager.prototype.join = function (name, opts) {
+            <pre><code class="language-javascript">Manager.prototype.join = function join(name, opts) {
   opts = opts || {};
   debug('joining channel %s', name);
   var fnc = opts[FORCE_NEW_CONNECTION];
@@ -252,7 +254,7 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Disconnect to a <code>channel</code>.</p> 
-            <pre><code class="language-javascript">Manager.prototype.leave = function (name) {
+            <pre><code class="language-javascript">Manager.prototype.leave = function leave(name) {
   var chnl = this.chnls[name];
   if (chnl) {
     debug('disconnecting from channel %s', name);
@@ -288,7 +290,7 @@ var FORCE_NEW_CONNECTION = 'force new connection';</code></pre>
             </tbody>
           </table>
           <div class="description"><p>Get a stored <code>channel</code> connection for use.</p> 
-            <pre><code class="language-javascript">Manager.prototype.getChannel = function (name) {
+            <pre><code class="language-javascript">Manager.prototype.getChannel = function getChannel(name) {
   var chnl = this.chnls[name];
   if (!chnl) return debug(&quot;Channel '%s' doesn't exist.&quot;, name);
   return chnl;
